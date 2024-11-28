@@ -14,9 +14,9 @@ public abstract class Servos {
     public static String outtakeClaw = "s1e";
 
     public static String intakeBarServoLeft = "s2";
-    public static String intakeBarServoRight = "s5";
+    public static String intakeBarServoRight = "s3";
 
-    public static String intakeJointServo = "s3";
+    public static String intakeJointServo = "s5";
     public static String intakeRotationServo = "s4";
     public static String intakeClawServo = "s1";
 

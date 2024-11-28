@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.stat.inference.OneWayAnova;
 import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeBar;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeClaw;
