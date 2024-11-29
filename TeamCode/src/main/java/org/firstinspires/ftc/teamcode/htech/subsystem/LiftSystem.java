@@ -74,6 +74,10 @@ public class LiftSystem {
         return currentPos < PositionsLift.ground + 15 && target_position == PositionsLift.ground;
     }
 
+    public boolean isAtPosition() {
+        return Math.abs(currentPos - target_position) < 10;
+    }
+
     public void update() {
         currentPos = left.getCurrentPosition();
         double power = pidController.update(currentPos);

@@ -14,25 +14,25 @@ public class IntakeBar {
     public IntakeBar(HardwareMap hardwareMap) {
         barServo = hardwareMap.get(Servo.class, Servos.intakeBarServoLeft);
         barServo2 = hardwareMap.get(Servo.class, Servos.intakeBarServoRight);
-        barServo.setPosition(PositionsIntake.transferPositionBar);
+        barServo.setPosition(PositionsIntake.transferPositionBar + PositionsIntake.offsetBar);
         barServo2.setPosition(PositionsIntake.transferPositionBar);
         currentPosition = PositionsIntake.transferPositionBar;
     }
 
     public void goToGround() {
-        barServo.setPosition(PositionsIntake.groundPositionBar);
+        barServo.setPosition(PositionsIntake.groundPositionBar + PositionsIntake.offsetBar);
         barServo2.setPosition(PositionsIntake.groundPositionBar);
         currentPosition = PositionsIntake.groundPositionBar;
     }
 
     public void goToWall() {
-        barServo.setPosition(PositionsIntake.wallPositionBar);
+        barServo.setPosition(PositionsIntake.wallPositionBar + PositionsIntake.offsetBar);
         barServo2.setPosition(PositionsIntake.wallPositionBar);
         currentPosition = PositionsIntake.wallPositionBar;
     }
 
     public void goToTransfer() {
-        barServo.setPosition(PositionsIntake.transferPositionBar);
+        barServo.setPosition(PositionsIntake.transferPositionBar + PositionsIntake.offsetBar);
         barServo2.setPosition(PositionsIntake.transferPositionBar);
         currentPosition = PositionsIntake.transferPositionBar;
     }
@@ -46,7 +46,7 @@ public class IntakeBar {
     }
 
     public void goToCollect() {
-        barServo.setPosition(PositionsIntake.collectPositionBar);
+        barServo.setPosition(PositionsIntake.collectPositionBar + PositionsIntake.offsetBar);
         barServo2.setPosition(PositionsIntake.collectPositionBar);
         currentPosition = PositionsIntake.collectPositionBar;
     }

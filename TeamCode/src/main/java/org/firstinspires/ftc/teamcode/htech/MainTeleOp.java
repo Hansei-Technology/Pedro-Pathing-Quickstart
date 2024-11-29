@@ -69,10 +69,16 @@ public class MainTeleOp extends LinearOpMode {
 
             //lift control
             if(gamepad1.y) {
+                lift.goToHighBasket();
+                outtakeSubsystem.goToSampleScore();
+            }
+
+            if(gamepad1.b) {
                 lift.goToHighChamber();
                 outtakeSubsystem.goToSpecimenScore();
             }
-            if(gamepad1.b) {
+
+            if(gamepad1.left_bumper) {
                 lift.goToMagicPos();
             }
             if(gamepad1.a) {
@@ -170,6 +176,7 @@ public class MainTeleOp extends LinearOpMode {
                     timer.reset();
                     intakeSubsystem.claw.open();
                     intakeSubsystem.claw.open();
+                    outtakeSubsystem.claw.close();
                     transferState = TransferStates.WAITING_TO_FALL;
                 }
                 break;
@@ -184,7 +191,7 @@ public class MainTeleOp extends LinearOpMode {
             case TRANSFER_READY:
                 if(timer.milliseconds() > RobotSettings.timeToCloseOuttake) {
                     timer.reset();
-                    outtakeSubsystem.claw.close();
+
                     transferState = TransferStates.IDLE;
                 }
         }

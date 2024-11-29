@@ -29,6 +29,7 @@ public class OuttakeSubsystem {
 
     public void goToTransfer() {
         joint.goToTransfer();
+        claw.open();
     }
 
     public void goToSampleScore() {
