@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 /**
@@ -53,21 +55,14 @@ public class BasketAuto extends OpMode {
     private Follower follower;
 
     private Path goToPreload;
-    private Path goTo1Sample;
-    private Path goTo2Sample;
-    private Path goTo3Sample;
-    private Path goTo1Basket;
-    private Path goTo2Basket;
-    private Path goTo3Basket;
-    private Path goToPark;
 
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -21, PRELOAD_Y = 0, PRELOAD_ANGLE;
-    public static double SAFE_X = -7, SAFE_Y = -20, SAFE_ANGLE;
-    public static double SAMPLE1_X = -10, SAMPLE1_Y = -36, SAMPLE1_ANGLE = 180;
+    public static double SAFE_X = -7, SAFE_Y = -10, SAFE_ANGLE;
+    public static double SAMPLE1_X = -23.3, SAMPLE1_Y = -32, SAMPLE1_ANGLE = 180;
     public static double SAMPLE2_X, SAMPLE2_Y, SAMPLE2_ANGLE;
     public static double SAMPLE3_X, SAMPLE3_Y, SAMPLE3_ANGLE;
-    public static double BASKET1_X, BASKET1_Y, BASKET1_ANGLE;
+    public static double BASKET1_X = -12, BASKET1_Y = -38, BASKET1_ANGLE = 225;
     public static double BASKET2_X, BASKET2_Y, BASKET2_ANGLE;
     public static double BASKET3_X, BASKET3_Y, BASKET3_ANGLE;
     public static double PARK_X, PARK_Y, PARK_ANGLE;
@@ -86,12 +81,17 @@ public class BasketAuto extends OpMode {
         BASKET1,
         BASKET2,
         BASKET3,
+        COLLECTING1,
+        COLLECTING2,
+        COLLECTING3,
         PARK
     }
     public STATES CS = STATES.PRELOAD, PS = STATES.MOVING, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
 
 
+    PathChain goTo1Sample;
+    PathChain goTo1Basket;
     /**
      * This initializes the Follower and creates the forward and backward Paths. Additionally, this
      * initializes the FTC Dashboard telemetry.
@@ -109,16 +109,37 @@ public class BasketAuto extends OpMode {
         outtakeSubsystem.claw.close();
 
         follower = new Follower(hardwareMap);
-        follower.setMaxPower(0.6);
         //follower.setPose(new Pose(START_X, START_Y, START_ANGLE));
 
         goToPreload = new Path(new BezierLine(new Point(START_X,START_Y, Point.CARTESIAN), new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)));
         goToPreload.setConstantHeadingInterpolation(PRELOAD_ANGLE);
         goToPreload.setReversed(true);
+        follower.setMaxPower(0.6);
 
-        goTo1Sample = new Path(new BezierLine(new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN), new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)));
-        goTo1Sample.setLinearHeadingInterpolation(Math.toRadians(START_ANGLE), Math.toRadians(SAMPLE1_ANGLE));
-        goTo1Sample.setReversed(false);
+
+        goTo1Sample = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN),
+                                new Point(SAFE_X, SAFE_Y, Point.CARTESIAN),
+                                new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(START_ANGLE), Math.toRadians(SAMPLE1_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+        goTo1Basket = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
+                                new Point(BASKET1_X, BASKET1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE), Math.toRadians(BASKET1_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
 
         follower.followPath(goToPreload);
 
@@ -141,19 +162,19 @@ public class BasketAuto extends OpMode {
             case PRELOAD:
                 lift.goToHighChamber();
                 outtakeSubsystem.goToSpecimenScore();
-                PS = STATES.PRELOAD;
+                NS = STATES.PLACING_PRELOAD;
                 CS = STATES.MOVING;
                 break;
 
             case MOVING:
-                switch (PS) {
-                    case PRELOAD:
-                        if(!follower.isBusy()) {
+                if(!follower.isBusy()) {
+                    switch(NS) {
+                        case PLACING_PRELOAD:
                             lift.goToMagicPos();
-                            PS = STATES.MOVING;
-                            CS = STATES.PLACING_PRELOAD;
-                        }
-                        break;
+                            break;
+                    }
+
+                    CS = NS;
                 }
                 break;
             case PLACING_PRELOAD:
@@ -173,11 +194,27 @@ public class BasketAuto extends OpMode {
                 }
                 break;
             case SAMPLE1:
+                follower.setMaxPower(0.9);
                 follower.followPath(goTo1Sample);
+                lift.goToGround();
+                intakeSubsystem.goDown();
+                intakeSubsystem.claw.open();
+
                 timer.reset();
-                PS = STATES.PLACING_PRELOAD;
+                NS = STATES.COLLECTING1;
                 CS = STATES.MOVING;
                 break;
+            case COLLECTING1:
+                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                    follower.followPath(goTo1Basket);
+                    NS = STATES.BASKET1;
+                    CS = STATES.MOVING;
+                }
+                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
+                    intakeSubsystem.collect();
+                }
+
+
         }
 
         telemetry.addData("Match Time", matchTimer.seconds());
