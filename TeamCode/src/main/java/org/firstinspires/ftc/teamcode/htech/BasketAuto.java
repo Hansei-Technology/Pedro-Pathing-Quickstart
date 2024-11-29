@@ -45,7 +45,6 @@ public class BasketAuto extends OpMode {
     OuttakeSubsystem outtakeSubsystem;
     LiftSystem lift;
     ExtendoSystem extendo;
-    //HangSystem hang;
     ElapsedTime timer;
     ElapsedTime matchTimer;
 
@@ -59,8 +58,9 @@ public class BasketAuto extends OpMode {
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -21, PRELOAD_Y = 0, PRELOAD_ANGLE;
     public static double SAFE_X = -7, SAFE_Y = -10, SAFE_ANGLE;
+    public static double SAFE_BASKET_X = -20, SAFE_BASKET_Y = -10, SAFE_BASKET_ANGLE;
     public static double SAMPLE1_X = -23.3, SAMPLE1_Y = -32, SAMPLE1_ANGLE = 180;
-    public static double SAMPLE2_X, SAMPLE2_Y, SAMPLE2_ANGLE;
+    public static double SAMPLE2_X = -30, SAMPLE2_Y = -42, SAMPLE2_ANGLE = 270;
     public static double SAMPLE3_X, SAMPLE3_Y, SAMPLE3_ANGLE;
     public static double BASKET1_X = -12, BASKET1_Y = -38, BASKET1_ANGLE = 225;
     public static double BASKET2_X, BASKET2_Y, BASKET2_ANGLE;
@@ -68,11 +68,22 @@ public class BasketAuto extends OpMode {
     public static double PARK_X, PARK_Y, PARK_ANGLE;
 
     public static int timeToPreload = 500;
+    public static int timeToSample = 200;
+
+
+    PathChain goTo1Sample;
+    PathChain goTo2Sample;
+    PathChain goTo3Sample;
+    PathChain goTo1Basket;
+    PathChain goTo2Basket;
+    PathChain goTo3Basket;
+    PathChain goToPark;
 
 
     private enum STATES {
         MOVING,
         WAITING,
+        TRANSFERING,
         PRELOAD,
         PLACING_PRELOAD,
         SAMPLE1,
@@ -86,16 +97,16 @@ public class BasketAuto extends OpMode {
         COLLECTING3,
         PARK
     }
-    public STATES CS = STATES.PRELOAD, PS = STATES.MOVING, NS = STATES.MOVING;
+    public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
 
+    Pose Sample1 = new Pose(SAMPLE1_X, SAMPLE1_Y, SAMPLE1_ANGLE);
+    Pose Sample2 = new Pose(SAMPLE2_X, SAMPLE2_Y, SAMPLE2_ANGLE);
+    Pose Sample3 = new Pose(SAMPLE3_X, SAMPLE3_Y, SAMPLE3_ANGLE);
+    Pose Basket1 = new Pose(BASKET1_X, BASKET1_Y, BASKET1_ANGLE);
+    Pose Basket2 = new Pose(BASKET2_X, BASKET2_Y, BASKET2_ANGLE);
+    Pose Basket3 = new Pose(BASKET3_X, BASKET3_Y, BASKET3_ANGLE);
 
-    PathChain goTo1Sample;
-    PathChain goTo1Basket;
-    /**
-     * This initializes the Follower and creates the forward and backward Paths. Additionally, this
-     * initializes the FTC Dashboard telemetry.
-     */
     @Override
     public void init() {
         chassisMovement = new ChassisMovement(hardwareMap);
@@ -128,34 +139,97 @@ public class BasketAuto extends OpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(START_ANGLE), Math.toRadians(SAMPLE1_ANGLE))
                 .setPathEndTimeoutConstraint(500)
+
                 .build();
+
 
         goTo1Basket = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
+                                new Point(SAFE_BASKET_X, SAFE_BASKET_Y, Point.CARTESIAN),
                                 new Point(BASKET1_X, BASKET1_Y, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE), Math.toRadians(BASKET1_ANGLE))
                 .setPathEndTimeoutConstraint(500)
+                .setReversed(true)
                 .build();
+
+
+        goTo2Sample = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(BASKET1_X,BASKET1_Y, Point.CARTESIAN),
+                                new Point(SAMPLE2_X,SAMPLE2_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(BASKET1_ANGLE), Math.toRadians(SAMPLE2_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+
+        goTo2Basket = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
+                                new Point(BASKET2_X, BASKET2_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE), Math.toRadians(BASKET2_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+
+        goTo3Sample = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(BASKET2_X,BASKET2_Y, Point.CARTESIAN),
+                                new Point(SAMPLE3_X,SAMPLE3_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(BASKET2_ANGLE), Math.toRadians(SAMPLE3_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+
+        goTo3Basket = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
+                                new Point(BASKET3_X, BASKET3_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE), Math.toRadians(BASKET3_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
+        goToPark = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(BASKET3_X, BASKET3_Y, Point.CARTESIAN),
+                                new Point(PARK_X, PARK_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(BASKET3_ANGLE), Math.toRadians(PARK_ANGLE))
+                .setPathEndTimeoutConstraint(500)
+                .build();
+
 
         follower.followPath(goToPreload);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
-    /**
-     * This runs the OpMode, updating the Follower as well as printing out the debug statements to
-     * the Telemetry, as well as the FTC Dashboard.
-     */
     @Override
     public void loop() {
         follower.update();
         lift.update();
         extendo.update();
         intakeSubsystem.updateColect();
+        updateTranfer();
 
 
         switch (CS) {
@@ -167,16 +241,29 @@ public class BasketAuto extends OpMode {
                 break;
 
             case MOVING:
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || isAtPos(follower.getPose(), new Pose(follower.getCurrentPath().getLastControlPoint().getX(), follower.getCurrentPath().getLastControlPoint().getY()), 0.5)) {
                     switch(NS) {
                         case PLACING_PRELOAD:
                             lift.goToMagicPos();
                             break;
                     }
-
                     CS = NS;
                 }
                 break;
+
+            case WAITING:
+                if(timer.milliseconds() > TIME_TO_WAIT) {
+                    CS = NS;
+                }
+                break;
+
+            case TRANSFERING:
+                if(transferState == TransferStates.READY_TO_TRANSFER) {
+                    lift.goToHighBasket();
+                    CS = STATES.MOVING;
+                }
+                break;
+
             case PLACING_PRELOAD:
                 if(lift.isAtPosition()) {
                     outtakeSubsystem.claw.open();
@@ -184,18 +271,12 @@ public class BasketAuto extends OpMode {
                     CS = STATES.WAITING;
                     TIME_TO_WAIT = timeToPreload;
                     timer.reset();
-
-
                 }
                 break;
-            case WAITING:
-                if(timer.milliseconds() > TIME_TO_WAIT) {
-                    CS = NS;
-                }
-                break;
+
             case SAMPLE1:
                 follower.setMaxPower(0.9);
-                follower.followPath(goTo1Sample);
+                follower.followPath(goTo1Sample, true);
                 lift.goToGround();
                 intakeSubsystem.goDown();
                 intakeSubsystem.claw.open();
@@ -204,23 +285,51 @@ public class BasketAuto extends OpMode {
                 NS = STATES.COLLECTING1;
                 CS = STATES.MOVING;
                 break;
+
             case COLLECTING1:
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                    follower.setMaxPower(0.6);
                     follower.followPath(goTo1Basket);
+                    transferState = TransferStates.LIFT_GOING_DOWN;
                     NS = STATES.BASKET1;
-                    CS = STATES.MOVING;
+                    CS = STATES.TRANSFERING;
                 }
-                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
+                if(isAtPos(follower.getPose(), Sample1, 0.5) && intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
                     intakeSubsystem.collect();
                 }
+                break;
 
+            case BASKET1:
+                outtakeSubsystem.claw.open();
+                timer.reset();
+                TIME_TO_WAIT = timeToSample;
+                NS = STATES.SAMPLE2;
+                CS = STATES.WAITING;
 
+            case SAMPLE2:
+                follower.setMaxPower(0.9);
+                follower.followPath(goTo2Sample, true);
+                outtakeSubsystem.goToTransfer();
+                lift.goToGround();
+                intakeSubsystem.goDown();
+                intakeSubsystem.claw.open();
+
+                timer.reset();
+                NS = STATES.COLLECTING1;
+                CS = STATES.MOVING;
+                break;
         }
 
         telemetry.addData("Match Time", matchTimer.seconds());
         follower.telemetryDebug(telemetryA);
     }
 
+
+    public boolean isAtPos(Pose current, Pose target, double tolerance) {
+        return Math.abs(current.getX() - target.getX()) < tolerance &&
+                Math.abs(current.getY() - target.getY()) < tolerance &&
+                Math.abs(Math.toDegrees(current.getHeading()) - target.getHeading()) < tolerance * 3;
+    }
 
 
 
@@ -294,12 +403,14 @@ public class BasketAuto extends OpMode {
                     transferState = TransferStates.TRANSFER_READY;
                 }
                 break;
+
             case TRANSFER_READY:
                 if (timer.milliseconds() > RobotSettings.timeToCloseOuttake) {
                     timer.reset();
 
                     transferState = TransferStates.IDLE;
                 }
+                break;
         }
     }
 }
