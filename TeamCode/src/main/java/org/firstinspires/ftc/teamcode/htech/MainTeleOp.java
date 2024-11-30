@@ -60,6 +60,10 @@ public class MainTeleOp extends LinearOpMode {
             if (gamepad2.y) {
                 intakeSubsystem.goToWall();
             }
+            //transfer
+            if(gamepad2.x) {
+                transferState = TransferStates.LIFT_GOING_DOWN;
+            }
             if (stickyGamepad2.right_bumper) intakeSubsystem.claw.toggle();
             if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 
@@ -88,13 +92,7 @@ public class MainTeleOp extends LinearOpMode {
             }
             if(gamepad1.dpad_left) outtakeSubsystem.goToSampleScore();
 
-            //transfer
-            if(gamepad1.x) {
-                transferState = TransferStates.LIFT_GOING_DOWN;
-            }
-
             if(gamepad1.right_bumper) outtakeSubsystem.claw.open();
-
 
             if(matchTimer.seconds() > 90) { //only in endgame
                 //hang.setPower(-gamepad2.right_stick_y);

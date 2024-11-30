@@ -232,7 +232,6 @@ public class BasketAuto extends OpMode {
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
-
     boolean firstTime = true;
 
     @Override
@@ -297,6 +296,7 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                 }
                 break;
+
             case SAMPLE1:
                 follower.setMaxPower(0.6);
                 follower.followPath(goTo1Sample, true);
@@ -428,6 +428,7 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                 }
                 break;
+
             case BASKET3:
                 lift.goToHighBasket();
                 if(firstTime) {
@@ -458,7 +459,7 @@ public class BasketAuto extends OpMode {
     }
 
 
-    public boolean isAtPos(Pose current, Pose target, double tolerance) {
+    public boolean isAtPos(Pose current, Pose target, double tolerance) { //i dont know if this works
         return Math.abs(current.getX() - target.getX()) < tolerance &&
                 Math.abs(current.getY() - target.getY()) < tolerance;
     }
