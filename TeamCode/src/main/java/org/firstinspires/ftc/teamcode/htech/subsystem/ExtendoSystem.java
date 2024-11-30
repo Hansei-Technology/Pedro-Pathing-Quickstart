@@ -56,6 +56,11 @@ public class ExtendoSystem {
         return currentPos < PositionsExtendo.ground + 15 && target_position == PositionsExtendo.ground;
     }
 
+    public void goToPos(int poz) {
+        target_position = poz;
+        pidController.targetValue = target_position;
+    }
+
     public void update() {
         currentPos = motor.getCurrentPosition();
         double power = pidController.update(currentPos);
