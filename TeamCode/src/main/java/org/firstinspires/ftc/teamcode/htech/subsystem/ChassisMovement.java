@@ -59,4 +59,12 @@ public class ChassisMovement {
         leftRearMotor.setPower((-g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
         rightRearMotor.setPower((-g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
     }
+
+    public void updateMovementSlowRotationReverse(Gamepad g) {
+        leftFrontMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
+        rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * 0.3) * speed);
+        leftRearMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
+        rightRearMotor.setPower((g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
+    }
+
 }
