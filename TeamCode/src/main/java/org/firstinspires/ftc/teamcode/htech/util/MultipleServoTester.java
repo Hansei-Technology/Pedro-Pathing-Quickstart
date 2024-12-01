@@ -33,6 +33,7 @@ public class MultipleServoTester extends LinearOpMode {
         if (length <= 0 || length > 10) {
             htelemetry.error("Length must be between 1 and 10.");
             htelemetry.info("This tester will now stop.");
+            htelemetry.update();
             stop();
             return;
         }
