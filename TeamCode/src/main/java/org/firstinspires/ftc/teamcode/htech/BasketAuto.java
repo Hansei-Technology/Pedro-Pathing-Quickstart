@@ -61,22 +61,20 @@ public class BasketAuto extends OpMode {
     public static double SAFE_X = -7, SAFE_Y = -10, SAFE_ANGLE;
     public static double SAFE_BASKET_X = -20, SAFE_BASKET_Y = -10, SAFE_BASKET_ANGLE;
     public static double SAMPLE1_X = -30, SAMPLE1_Y = -37, SAMPLE1_ANGLE = 180;
-    public static double SAMPLE2_X = -39, SAMPLE2_Y = -39.5, SAMPLE2_ANGLE = 270;
-    public static double SAMPLE3_X = -39, SAMPLE3_Y = -39.5, SAMPLE3_ANGLE = 270;
-    public static double BASKET1_X = -14, BASKET1_Y = -38.5, BASKET1_ANGLE = 120;
-    public static double BASKET2_X = -14, BASKET2_Y = -38.5, BASKET2_ANGLE = 123;
-    public static double BASKET3_X = -14, BASKET3_Y = -38.5, BASKET3_ANGLE = 125;
-    public static double PARK_X = -55, PARK_Y = -13.3, PARK_ANGLE = 270;
-    public static double SAFE_PARK_X = -52, SAFE_PARK_Y = -38, SAFE_PARK_ANGLE;
+    public static double SAMPLE2_X = -38.5, SAMPLE2_Y = -39.5, SAMPLE2_ANGLE = 270;
+    public static double SAMPLE3_X = -38.5, SAMPLE3_Y = -39.5, SAMPLE3_ANGLE = 270;
+    public static double BASKET1_X = -14.5, BASKET1_Y = -38, BASKET1_ANGLE = 135;
+    public static double BASKET2_X = -15, BASKET2_Y = -38, BASKET2_ANGLE = 135;
+    public static double BASKET3_X = -15.5, BASKET3_Y = -38, BASKET3_ANGLE = 135;
+    public static double PARK_X, PARK_Y, PARK_ANGLE;
 
-    public static int timeToPreload = 200;
-    public static int timeToSample = 200;
+    public static int timeToPreload = 500;
+    public static int timeToSample = 1000;
     public static int timeToCollect1 = 1000;
-    public static int timeToCollect2 = 1000;
-    public static int timeToCollect3 = 1000;
+    public static int timeToCollect2 = 2000;
+    public static int timeToCollect3 = 2000;
     public static int time_to_transfer = 500;
-    public static int time_to_lift = 650;
-    public static int time_to_drop = 800;
+    public static int time_to_lift = 1000;
 
 
     public static int extendoPoz3 = 350;
@@ -105,8 +103,7 @@ public class BasketAuto extends OpMode {
         COLLECTING1,
         COLLECTING2,
         COLLECTING3,
-        PARK,
-        PARKED
+        PARK
     }
     public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
@@ -220,9 +217,8 @@ public class BasketAuto extends OpMode {
 
         goToPark = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(BASKET3_X, BASKET3_Y, Point.CARTESIAN),
-                                new Point(SAFE_PARK_X, SAFE_PARK_Y, Point.CARTESIAN),
                                 new Point(PARK_X, PARK_Y, Point.CARTESIAN)
                         )
                 )
@@ -284,7 +280,7 @@ public class BasketAuto extends OpMode {
                     }
                     if(timer.milliseconds() > time_to_transfer) {
                         lift.goToHighBasket();
-//                        outtakeSubsystem.goToSampleScore();
+                        outtakeSubsystem.goToSampleScore();
                         firstTime = true;
                         CS = STATES.MOVING;
                     }
@@ -335,17 +331,12 @@ public class BasketAuto extends OpMode {
                 break;
 
             case BASKET1:
-                //lift.goToHighBasket();
+                lift.goToHighBasket();
                 if(firstTime) {
                     timer.reset();
                     firstTime = false;
                 }
-
                 if(timer.milliseconds() > time_to_lift) {
-                    outtakeSubsystem.goToSampleScore();
-                }
-
-                if(timer.milliseconds() > time_to_drop) {
                     outtakeSubsystem.claw.open();
                     timer.reset();
                     TIME_TO_WAIT = timeToSample;
@@ -394,17 +385,13 @@ public class BasketAuto extends OpMode {
                         timer.reset();
                         firstTime = false;
                     }
-                if(timer.milliseconds() > time_to_lift) {
-                    outtakeSubsystem.goToSampleScore();
-                }
-
-                if(timer.milliseconds() > time_to_drop) {
-                    outtakeSubsystem.claw.open();
-                    timer.reset();
-                    TIME_TO_WAIT = timeToSample;
-                    NS = STATES.SAMPLE3;
-                    CS = STATES.WAITING;
-                }
+                    if(timer.milliseconds() > time_to_lift) {
+                        outtakeSubsystem.claw.open();
+                        timer.reset();
+                        TIME_TO_WAIT = timeToSample;
+                        NS = STATES.SAMPLE3;
+                        CS = STATES.WAITING;
+                    }
                 break;
 
             case SAMPLE3:
@@ -448,35 +435,13 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                     firstTime = false;
                 }
-
                 if(timer.milliseconds() > time_to_lift) {
-                    outtakeSubsystem.goToSampleScore();
-                }
-
-                if(timer.milliseconds() > time_to_drop) {
                     outtakeSubsystem.claw.open();
                     timer.reset();
                     TIME_TO_WAIT = timeToSample;
                     NS = STATES.PARK;
                     CS = STATES.WAITING;
                 }
-                break;
-
-            case PARK:
-                follower.setMaxPower(0.8);
-                follower.followPath(goToPark, true);
-                outtakeSubsystem.goToTransfer();
-                lift.goToGround();
-                intakeSubsystem.goToReady();
-                intakeSubsystem.claw.open();
-
-                timer.reset();
-                NS = STATES.PARKED;
-                CS = STATES.MOVING;
-                break;
-
-            case PARKED:
-                lift.goToPark();
                 break;
 
         }

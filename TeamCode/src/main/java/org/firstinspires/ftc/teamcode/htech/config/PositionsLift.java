@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public abstract class PositionsLift {
     public static int ground = 0;
-    public static int park = 200;
     public static int transfer = 0;
     public static int lowChamber = 300;
     public static int highChamber = 440;

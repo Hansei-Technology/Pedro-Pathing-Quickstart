@@ -18,7 +18,7 @@ public abstract class PositionsIntake {
 
     // INTAKE BAR //
     public static double groundPositionBar = 0.64;
-    public static double wallPositionBar = 0.55;
+    public static double wallPositionBar = 0.4;
     public static double transferPositionBar = 0.33; // maybe change this
     public static double collectPositionBar = 0.69; // collect position = ground ??
     public static double offsetBar = 0.025;
