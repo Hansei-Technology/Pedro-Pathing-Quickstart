@@ -19,7 +19,7 @@ public abstract class RobotSettings {
     public static int timeToDropElement = 150;
     public static int timeToCloseOuttake = 150;
 
-    public static int timeToCollect = 120;
-    public static int timeToCollectGoingDown = 100;
-    public static int timeToCollectGoingUp = 75;
+    public static int timeToCollect = 150;
+    public static int timeToCollectGoingDown = 125;
+    public static int timeToCollectGoingUp = 100;
 }

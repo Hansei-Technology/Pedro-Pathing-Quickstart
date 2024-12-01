@@ -48,15 +48,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("[STATUS]", "Main Teleop is running.");
             telemetry.addData("Match Time", matchTimer.seconds());
 
-            chassisMovement.updateMovement(gamepad1);
+            
 
-            if(gamepad1.right_trigger > 0.1){
-                RobotSettings.rotationSpeed = 0.5;
-            }
 
-            if(gamepad1.left_trigger > 0.1){
-                chassisMovement.updateMovementReverse(gamepad1);
-            }
 
             //intake
             if (gamepad2.a) {

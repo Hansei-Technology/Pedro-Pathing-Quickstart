@@ -320,7 +320,7 @@ public class BasketAuto extends OpMode {
                     firstTime = false;
                 }
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
-                    follower.setMaxPower(0.9);
+                    follower.setMaxPower(0.6);
                     follower.followPath(goTo1Basket, true);
                     timerTransfer.reset();
                     transferState = TransferStates.LIFT_GOING_DOWN;
@@ -355,7 +355,7 @@ public class BasketAuto extends OpMode {
                 break;
 
             case SAMPLE2:
-                follower.setMaxPower(0.9);
+                follower.setMaxPower(0.6);
                 follower.followPath(goTo2Sample, true);
                 outtakeSubsystem.goToTransfer();
                 lift.goToGround();
@@ -374,7 +374,7 @@ public class BasketAuto extends OpMode {
                     firstTime = false;
                 }
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
-                    follower.setMaxPower(0.9);
+                    follower.setMaxPower(0.6);
                     follower.followPath(goTo2Basket, true);
                     timerTransfer.reset();
                     transferState = TransferStates.LIFT_GOING_DOWN;
@@ -408,7 +408,7 @@ public class BasketAuto extends OpMode {
                 break;
 
             case SAMPLE3:
-                follower.setMaxPower(0.9);
+                follower.setMaxPower(0.6);
                 follower.followPath(goTo3Sample, true);
                 outtakeSubsystem.goToTransfer();
                 lift.goToGround();
@@ -428,7 +428,7 @@ public class BasketAuto extends OpMode {
                     extendo.goToPos(350);
                 }
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
-                    follower.setMaxPower(0.9);
+                    follower.setMaxPower(0.6);
                     follower.followPath(goTo3Basket, true);
                     timerTransfer.reset();
                     transferState = TransferStates.LIFT_GOING_DOWN;
