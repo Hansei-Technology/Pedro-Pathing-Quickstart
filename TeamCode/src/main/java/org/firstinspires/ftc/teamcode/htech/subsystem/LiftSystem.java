@@ -74,6 +74,13 @@ public class LiftSystem {
         return currentPos < PositionsLift.ground + 15 && target_position == PositionsLift.ground;
     }
 
+    public void goToPark() {
+        target_position = PositionsLift.park;
+        pidController.targetValue = target_position;
+    }
+
+
+
     public boolean isAtPosition() {
         return Math.abs(currentPos - target_position) < 10;
     }
