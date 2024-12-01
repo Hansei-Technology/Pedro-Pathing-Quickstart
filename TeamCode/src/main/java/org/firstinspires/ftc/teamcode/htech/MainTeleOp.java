@@ -50,6 +50,14 @@ public class MainTeleOp extends LinearOpMode {
 
             chassisMovement.updateMovement(gamepad1);
 
+            if(gamepad1.right_trigger > 0.1){
+                RobotSettings.rotationSpeed = 0.5;
+            }
+
+            if(gamepad1.left_trigger > 0.1){
+                chassisMovement.updateMovementReverse(gamepad1);
+            }
+
             //intake
             if (gamepad2.a) {
                 intakeSubsystem.goDown();
@@ -60,10 +68,6 @@ public class MainTeleOp extends LinearOpMode {
             if (gamepad2.y) {
                 intakeSubsystem.goToWall();
             }
-            //transfer
-            if(gamepad2.x) {
-                transferState = TransferStates.LIFT_GOING_DOWN;
-            }
             if (stickyGamepad2.right_bumper) intakeSubsystem.claw.toggle();
             if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 
@@ -73,16 +77,10 @@ public class MainTeleOp extends LinearOpMode {
 
             //lift control
             if(gamepad1.y) {
-                lift.goToHighBasket();
-                outtakeSubsystem.goToSampleScore();
-            }
-
-            if(gamepad1.b) {
                 lift.goToHighChamber();
                 outtakeSubsystem.goToSpecimenScore();
             }
-
-            if(gamepad1.left_bumper) {
+            if(gamepad1.b) {
                 lift.goToMagicPos();
             }
             if(gamepad1.a) {
@@ -92,7 +90,13 @@ public class MainTeleOp extends LinearOpMode {
             }
             if(gamepad1.dpad_left) outtakeSubsystem.goToSampleScore();
 
+            //transfer
+            if(gamepad1.x) {
+                transferState = TransferStates.LIFT_GOING_DOWN;
+            }
+
             if(gamepad1.right_bumper) outtakeSubsystem.claw.open();
+
 
             if(matchTimer.seconds() > 90) { //only in endgame
                 //hang.setPower(-gamepad2.right_stick_y);
@@ -174,7 +178,6 @@ public class MainTeleOp extends LinearOpMode {
                     timer.reset();
                     intakeSubsystem.claw.open();
                     intakeSubsystem.claw.open();
-                    outtakeSubsystem.claw.close();
                     transferState = TransferStates.WAITING_TO_FALL;
                 }
                 break;
@@ -189,7 +192,7 @@ public class MainTeleOp extends LinearOpMode {
             case TRANSFER_READY:
                 if(timer.milliseconds() > RobotSettings.timeToCloseOuttake) {
                     timer.reset();
-
+                    outtakeSubsystem.claw.close();
                     transferState = TransferStates.IDLE;
                 }
         }
