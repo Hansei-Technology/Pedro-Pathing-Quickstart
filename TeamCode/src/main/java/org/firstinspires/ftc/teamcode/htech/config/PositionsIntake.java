@@ -17,11 +17,11 @@ public abstract class PositionsIntake {
     public static double flippedNormalRotation = 0.84;
 
     // INTAKE BAR //
-    public static double groundPositionBar = 0.64;
-    public static double wallPositionBar = 0.55;
-    public static double transferPositionBar = 0.33; // maybe change this
-    public static double collectPositionBar = 0.69; // collect position = ground ??
-    public static double offsetBar = 0.025;
+    public static double groundPositionBar = 0.58;
+    public static double wallPositionBar = 0.43;
+    public static double transferPositionBar = 0.27; // maybe change this
+    public static double collectPositionBar = 0.61; // collect position = ground ??
+    public static double offsetBar = 0;
 
     // INTAKE JOINT //
     public static double groundPositionJoint = 0.55;

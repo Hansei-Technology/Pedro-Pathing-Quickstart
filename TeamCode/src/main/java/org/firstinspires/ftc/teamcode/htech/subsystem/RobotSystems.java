@@ -23,16 +23,17 @@ public class RobotSystems {
         extendoSystem.update();
         liftSystem.update();
         intakeSubsystem.updateColect();
+        updateTranfer();
     }
 
 
-    enum TransferStates {
+    public enum TransferStates {
         IDLE,
         LIFT_GOING_DOWN,
         INTAKE_DOWN,
         INTAKE_WALL,
         READY_TO_TRANSFER,
-        WAITING_TO_FALL,
+        WAITING_TO_CATCH,
         TRANSFER_READY,
         LIFT_GOING_UP,
     }
@@ -84,14 +85,13 @@ public class RobotSystems {
                 if (timer.milliseconds() > RobotSettings.timeReady_Transfer) {
                     timer.reset();
                     intakeSubsystem.claw.open();
-                    intakeSubsystem.claw.open();
                     outtakeSubsystem.claw.close();
-                    transferState = TransferStates.WAITING_TO_FALL;
+                    transferState = TransferStates.WAITING_TO_CATCH;
                 }
                 break;
 
-            case WAITING_TO_FALL:
-                if (timer.milliseconds() > RobotSettings.timeToDropElement) {
+            case WAITING_TO_CATCH:
+                if (timer.milliseconds() > RobotSettings.timeToCatch) {
                     timer.reset();
                     intakeSubsystem.goToWall();
                     transferState = TransferStates.TRANSFER_READY;

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
 
 @TeleOp(name = "[TELEOP] Main", group = "HTech")
 public class MainTeleOp extends LinearOpMode {
@@ -23,6 +24,7 @@ public class MainTeleOp extends LinearOpMode {
     //HangSystem hang;
     ElapsedTime timer;
     ElapsedTime matchTimer;
+    RobotSystems robotSystems;
 
 
     @Override
@@ -35,6 +37,7 @@ public class MainTeleOp extends LinearOpMode {
         extendo = new ExtendoSystem(hardwareMap);
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
+        robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);
@@ -45,12 +48,8 @@ public class MainTeleOp extends LinearOpMode {
         matchTimer.reset();
 
         while (opModeIsActive()) {
-            telemetry.addData("[STATUS]", "Main Teleop is running.");
-            telemetry.addData("Match Time", matchTimer.seconds());
 
-            
-
-
+            chassisMovement.move(gamepad1);
 
             //intake
             if (gamepad2.a) {
@@ -62,6 +61,11 @@ public class MainTeleOp extends LinearOpMode {
             if (gamepad2.y) {
                 intakeSubsystem.goToWall();
             }
+            //transfer
+            if(gamepad2.x) {
+                robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
+            }
+
             if (stickyGamepad2.right_bumper) intakeSubsystem.claw.toggle();
             if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 
@@ -70,12 +74,13 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad2.dpad_up) extendo.goToMax();
 
             //lift control
-            if(gamepad1.y) {
+            if(gamepad1.b) {
                 lift.goToHighChamber();
                 outtakeSubsystem.goToSpecimenScore();
             }
-            if(gamepad1.b) {
-                lift.goToMagicPos();
+            if(gamepad1.y) {
+                lift.goToHighBasket();
+                outtakeSubsystem.goToSampleScore();
             }
             if(gamepad1.a) {
                 lift.goToGround();
@@ -84,12 +89,8 @@ public class MainTeleOp extends LinearOpMode {
             }
             if(gamepad1.dpad_left) outtakeSubsystem.goToSampleScore();
 
-            //transfer
-            if(gamepad1.x) {
-                transferState = TransferStates.LIFT_GOING_DOWN;
-            }
-
             if(gamepad1.right_bumper) outtakeSubsystem.claw.open();
+            if(gamepad1.left_bumper) lift.goToMagicPos();
 
 
             if(matchTimer.seconds() > 90) { //only in endgame
@@ -100,95 +101,16 @@ public class MainTeleOp extends LinearOpMode {
 
             stickyGamepad2.update();
             stickyGamepad1.update();
-            intakeSubsystem.updateColect();
-            lift.update();
-            extendo.update();
-            updateTranfer();
+            robotSystems.update();
 
             //telemetry:
+            telemetry.addData("[STATUS]", "Main Teleop is running.");
+            telemetry.addData("Match Time", matchTimer.seconds());
             telemetry.addData("Lift", lift.currentPos);
             telemetry.addData("Extendo", extendo.currentPos);
             telemetry.addData("Intake", intakeSubsystem.CS);
 
             telemetry.update();
-        }
-    }
-
-    enum TransferStates {
-        IDLE,
-        LIFT_GOING_DOWN,
-        INTAKE_DOWN,
-        INTAKE_WALL,
-        READY_TO_TRANSFER,
-        WAITING_TO_FALL,
-        TRANSFER_READY,
-        LIFT_GOING_UP,
-    }
-    TransferStates transferState = TransferStates.IDLE;
-
-    void updateTranfer() {
-        switch (transferState) {
-            case IDLE:
-                break;
-
-            case LIFT_GOING_DOWN:
-                //on entry
-                lift.goToGround();
-                extendo.goToGround();
-                outtakeSubsystem.goToTransfer();
-                outtakeSubsystem.claw.open();
-                timer.reset();
-
-                //condition to exit
-                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.goToReady();
-                    transferState = TransferStates.INTAKE_DOWN;
-                } else {
-                    intakeSubsystem.goToReady();
-                    transferState = TransferStates.INTAKE_WALL;
-                }
-                break;
-
-            case INTAKE_DOWN:
-                if(lift.isDown() && extendo.isDown() && timer.milliseconds() > RobotSettings.timeDown_Transfer) {
-                    intakeSubsystem.goToTransfer();
-                    timer.reset();
-                    transferState = TransferStates.READY_TO_TRANSFER;
-                }
-
-                break;
-
-            case INTAKE_WALL:
-                if(lift.isDown() && extendo.isDown() && timer.milliseconds() > RobotSettings.timeWall_Transfer) {
-                    intakeSubsystem.goToTransfer();
-                    timer.reset();
-                    transferState = TransferStates.READY_TO_TRANSFER;
-                }
-
-                break;
-
-            case READY_TO_TRANSFER:
-                if(timer.milliseconds() > RobotSettings.timeReady_Transfer) {
-                    timer.reset();
-                    intakeSubsystem.claw.open();
-                    intakeSubsystem.claw.open();
-                    transferState = TransferStates.WAITING_TO_FALL;
-                }
-                break;
-
-            case WAITING_TO_FALL:
-                if(timer.milliseconds() > RobotSettings.timeToDropElement) {
-                    timer.reset();
-                    intakeSubsystem.goToWall();
-                    transferState = TransferStates.TRANSFER_READY;
-                }
-                break;
-            case TRANSFER_READY:
-                if(timer.milliseconds() > RobotSettings.timeToCloseOuttake) {
-                    timer.reset();
-                    outtakeSubsystem.claw.close();
-                    transferState = TransferStates.IDLE;
-                }
         }
     }
 

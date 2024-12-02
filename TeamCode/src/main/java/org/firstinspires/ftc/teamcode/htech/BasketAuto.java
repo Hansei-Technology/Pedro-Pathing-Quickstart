@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -38,14 +39,14 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Autonomous (name = "BasketAuto", group = "AUTO")
+@Autonomous (name = "BasketAuto", group = "HTECH")
 public class BasketAuto extends OpMode {
     ChassisMovement chassisMovement;
     IntakeSubsystem intakeSubsystem;
     OuttakeSubsystem outtakeSubsystem;
     LiftSystem lift;
     ExtendoSystem extendo;
-    ElapsedTime timerTransfer;
+    RobotSystems robotSystems;
     ElapsedTime timer;
     ElapsedTime matchTimer;
 
@@ -125,8 +126,8 @@ public class BasketAuto extends OpMode {
         outtakeSubsystem = new OuttakeSubsystem(hardwareMap);
         lift = new LiftSystem(hardwareMap);
         extendo = new ExtendoSystem(hardwareMap);
+        robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         timer = new ElapsedTime();
-        timerTransfer = new ElapsedTime();
         matchTimer = new ElapsedTime();
 
         outtakeSubsystem.claw.close();
@@ -241,10 +242,7 @@ public class BasketAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        lift.update();
-        extendo.update();
-        intakeSubsystem.updateColect();
-        updateTranfer();
+        robotSystems.update();
 
 
         switch (CS) {
@@ -277,7 +275,7 @@ public class BasketAuto extends OpMode {
                 break;
 
             case TRANSFERING:
-                if(transferState == TransferStates.IDLE) {
+                if(robotSystems.transferState == RobotSystems.TransferStates.IDLE) {
                     if(firstTime) {
                         timer.reset();
                         firstTime = false;
@@ -322,8 +320,7 @@ public class BasketAuto extends OpMode {
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo1Basket, true);
-                    timerTransfer.reset();
-                    transferState = TransferStates.LIFT_GOING_DOWN;
+                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
                     NS = STATES.BASKET1;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
@@ -376,8 +373,7 @@ public class BasketAuto extends OpMode {
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo2Basket, true);
-                    timerTransfer.reset();
-                    transferState = TransferStates.LIFT_GOING_DOWN;
+                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
                     NS = STATES.BASKET2;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
@@ -425,13 +421,12 @@ public class BasketAuto extends OpMode {
                 if(firstTime) {
                     timer.reset();
                     firstTime = false;
-                    extendo.goToPos(350);
+                    extendo.goToPos(extendoPoz3);
                 }
                 if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo3Basket, true);
-                    timerTransfer.reset();
-                    transferState = TransferStates.LIFT_GOING_DOWN;
+                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
                     NS = STATES.BASKET3;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
@@ -484,9 +479,8 @@ public class BasketAuto extends OpMode {
         telemetry.addData("Match Time", matchTimer.seconds());
         telemetry.addData("Current State", CS);
         telemetry.addData("Next State", follower.getPose());
-        telemetry.addData("Transfer State", transferState);
+        telemetry.addData("Transfer State", robotSystems.transferState);
         telemetry.addData("timer", timer.milliseconds());
-        telemetry.addData("timerTransfer, ", timerTransfer.milliseconds());
         telemetry.addData("extendoTarget", extendo.target_position);
         telemetry.update();
 
@@ -497,88 +491,5 @@ public class BasketAuto extends OpMode {
     public boolean isAtPos(Pose current, Pose target, double tolerance) { //i dont know if this works
         return Math.abs(current.getX() - target.getX()) < tolerance &&
                 Math.abs(current.getY() - target.getY()) < tolerance;
-    }
-
-
-
-    enum TransferStates {
-        IDLE,
-        LIFT_GOING_DOWN,
-        INTAKE_DOWN,
-        INTAKE_WALL,
-        READY_TO_TRANSFER,
-        WAITING_TO_FALL,
-        TRANSFER_READY,
-        LIFT_GOING_UP,
-    }
-    TransferStates transferState = TransferStates.IDLE;
-
-    void updateTranfer() {
-        switch (transferState) {
-            case IDLE:
-                break;
-
-            case LIFT_GOING_DOWN:
-                //on entry
-                lift.goToGround();
-                extendo.goToGround();
-                outtakeSubsystem.goToTransfer();
-                outtakeSubsystem.claw.open();
-                timerTransfer.reset();
-
-                //condition to exit
-                if (intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.goToReady();
-                    transferState = TransferStates.INTAKE_DOWN;
-                } else {
-                    intakeSubsystem.goToReady();
-                    transferState = TransferStates.INTAKE_WALL;
-                }
-                break;
-
-            case INTAKE_DOWN:
-                if (lift.isDown() && extendo.isDown() && timerTransfer.milliseconds() > RobotSettings.timeDown_Transfer) {
-                    intakeSubsystem.goToTransfer();
-                    timerTransfer.reset();
-                    transferState = TransferStates.READY_TO_TRANSFER;
-                }
-
-                break;
-
-            case INTAKE_WALL:
-                if (lift.isDown() && extendo.isDown() && timerTransfer.milliseconds() > RobotSettings.timeWall_Transfer) {
-                    intakeSubsystem.goToTransfer();
-                    timerTransfer.reset();
-                    transferState = TransferStates.READY_TO_TRANSFER;
-                }
-
-                break;
-
-            case READY_TO_TRANSFER:
-                if (timerTransfer.milliseconds() > RobotSettings.timeReady_Transfer) {
-                    timerTransfer.reset();
-                    intakeSubsystem.claw.open();
-                    intakeSubsystem.claw.open();
-                    outtakeSubsystem.claw.close();
-                    transferState = TransferStates.WAITING_TO_FALL;
-                }
-                break;
-
-            case WAITING_TO_FALL:
-                if (timerTransfer.milliseconds() > RobotSettings.timeToDropElement) {
-                    timerTransfer.reset();
-                    intakeSubsystem.goToWall();
-                    transferState = TransferStates.TRANSFER_READY;
-                }
-                break;
-
-            case TRANSFER_READY:
-                if (timerTransfer.milliseconds() > RobotSettings.timeToCloseOuttake) {
-                    timerTransfer.reset();
-
-                    transferState = TransferStates.IDLE;
-                }
-                break;
-        }
     }
 }

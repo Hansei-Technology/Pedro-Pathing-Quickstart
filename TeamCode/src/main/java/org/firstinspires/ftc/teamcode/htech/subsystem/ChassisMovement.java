@@ -39,6 +39,18 @@ public class ChassisMovement {
         rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void move(Gamepad g) {
+        if(g.right_trigger > 0.05 && g.left_trigger > 0.05) {
+            updateMovementSlowRotationReverse(g);
+        } else if(g.right_trigger > 0.05) {
+            updateMovementReverse(g);
+        } else if (g.left_trigger > 0.05) {
+            updateMovementSlowRotation(g);
+        } else {
+            updateMovement(g);
+        }
+    }
+
     public void updateMovement(Gamepad g) {
         leftFrontMotor.setPower((-g.left_stick_y + g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
         rightFrontMotor.setPower((-g.left_stick_y - g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
@@ -58,5 +70,12 @@ public class ChassisMovement {
         rightFrontMotor.setPower((-g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
         leftRearMotor.setPower((-g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
         rightRearMotor.setPower((-g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
+    }
+
+    public void updateMovementSlowRotationReverse(Gamepad g){
+        leftFrontMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
+        rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * 0.3) * speed);
+        leftRearMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
+        rightRearMotor.setPower((g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
     }
 }
