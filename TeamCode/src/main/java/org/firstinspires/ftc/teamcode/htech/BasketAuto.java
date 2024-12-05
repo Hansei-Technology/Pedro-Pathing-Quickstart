@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.htech.MainTeleOp;
-import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -21,7 +19,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
@@ -67,14 +64,14 @@ public class BasketAuto extends OpMode {
     public static double BASKET1_X = -14, BASKET1_Y = -38.5, BASKET1_ANGLE = 120;
     public static double BASKET2_X = -14, BASKET2_Y = -38.5, BASKET2_ANGLE = 123;
     public static double BASKET3_X = -14, BASKET3_Y = -38.5, BASKET3_ANGLE = 125;
-    public static double PARK_X = -55, PARK_Y = -13.3, PARK_ANGLE = 270;
+    public static double PARK_X = -55, PARK_Y = -14.3, PARK_ANGLE = 270;
     public static double SAFE_PARK_X = -52, SAFE_PARK_Y = -38, SAFE_PARK_ANGLE;
 
     public static int timeToPreload = 200;
     public static int timeToSample = 200;
     public static int timeToCollect1 = 1000;
     public static int timeToCollect2 = 1000;
-    public static int timeToCollect3 = 1000;
+    public static int timeToCollect3 = 1500;
     public static int time_to_transfer = 500;
     public static int time_to_lift = 650;
     public static int time_to_drop = 800;
@@ -317,7 +314,7 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                     firstTime = false;
                 }
-                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo1Basket, true);
                     robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
@@ -325,7 +322,7 @@ public class BasketAuto extends OpMode {
                     firstTime = true;
                     CS = STATES.TRANSFERING;
                 }
-                if(timer.milliseconds() > timeToCollect1 && intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
+                if(timer.milliseconds() > timeToCollect1 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
                     intakeSubsystem.collect();
                     timer.reset();
                 }
@@ -370,7 +367,7 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                     firstTime = false;
                 }
-                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo2Basket, true);
                     robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
@@ -378,7 +375,7 @@ public class BasketAuto extends OpMode {
                     firstTime = true;
                     CS = STATES.TRANSFERING;
                 }
-                if(timer.milliseconds() > timeToCollect2 && intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
+                if(timer.milliseconds() > timeToCollect2 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
                     intakeSubsystem.collect();
                     timer.reset();
                 }
@@ -423,7 +420,7 @@ public class BasketAuto extends OpMode {
                     firstTime = false;
                     extendo.goToPos(extendoPoz3);
                 }
-                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo3Basket, true);
                     robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
@@ -431,7 +428,7 @@ public class BasketAuto extends OpMode {
                     firstTime = true;
                     CS = STATES.TRANSFERING;
                 }
-                if(timer.milliseconds() > timeToCollect3 && intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
+                if(timer.milliseconds() > timeToCollect3 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
                     intakeSubsystem.collect();
                     timer.reset();
                 }

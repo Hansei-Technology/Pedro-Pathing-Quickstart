@@ -10,6 +10,7 @@ public class RobotSystems {
     public IntakeSubsystem intakeSubsystem;
     public OuttakeSubsystem outtakeSubsystem;
     ElapsedTime timer;
+    public ElapsedTime timerCollect;
 
     public RobotSystems(ExtendoSystem extendoSystem, LiftSystem liftSystem, IntakeSubsystem intakeSubsystem, OuttakeSubsystem outtakeSubsystem) {
         this.extendoSystem = extendoSystem;
@@ -17,13 +18,15 @@ public class RobotSystems {
         this.intakeSubsystem = intakeSubsystem;
         this.outtakeSubsystem = outtakeSubsystem;
         timer = new ElapsedTime();
+        timerCollect = new ElapsedTime();
     }
 
     public void update() {
         extendoSystem.update();
         liftSystem.update();
-        intakeSubsystem.updateColect();
+        intakeSubsystem.update();
         updateTranfer();
+        updateCollect();
     }
 
 
@@ -40,6 +43,44 @@ public class RobotSystems {
 
     public TransferStates transferState = TransferStates.IDLE;
 
+
+    public boolean firstTime = true;
+
+    void updateCollect() {
+        switch (intakeSubsystem.intakeState) {
+            case COLLECT_GOING_DOWN:
+                if(firstTime) {
+                    timerCollect.reset();
+                    firstTime = false;
+                }
+                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDown) {
+                    intakeSubsystem.claw.close();
+                    timerCollect.reset();
+                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
+                }
+                break;
+            case COLLECTING:
+                firstTime = true;
+                if(intakeSubsystem.fastCollect && timerCollect.milliseconds() > RobotSettings.timeToCollectFast) {
+                    transferState = TransferStates.LIFT_GOING_DOWN;
+                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.DOWN;
+                    intakeSubsystem.fastCollect = false;
+                }
+
+                if(timerCollect.milliseconds() > RobotSettings.timeToCollect) {
+                    intakeSubsystem.goDown();
+                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLECT_GOING_UP;
+                }
+                break;
+            case COLECT_GOING_UP:
+                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingUp) {
+                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.DOWN;
+                }
+                break;
+        }
+    }
+
+
     void updateTranfer() {
         switch (transferState) {
             case IDLE:
@@ -54,7 +95,7 @@ public class RobotSystems {
                 timer.reset();
 
                 //condition to exit
-                if (intakeSubsystem.CS == IntakeSubsystem.IntakeState.DOWN) {
+                if (intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
                     intakeSubsystem.goToReady();
                     transferState = TransferStates.INTAKE_DOWN;
                 } else {

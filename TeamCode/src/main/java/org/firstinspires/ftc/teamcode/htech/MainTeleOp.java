@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.htech;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
-import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
-import org.firstinspires.ftc.teamcode.htech.mechanism.HangSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -38,6 +38,7 @@ public class MainTeleOp extends LinearOpMode {
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);
@@ -47,6 +48,9 @@ public class MainTeleOp extends LinearOpMode {
 
         matchTimer.reset();
 
+        lift.goToMinusPark();
+        sleep(300);
+        lift.reset();
         while (opModeIsActive()) {
 
             chassisMovement.move(gamepad1);
@@ -57,6 +61,9 @@ public class MainTeleOp extends LinearOpMode {
             }
             if(stickyGamepad2.b) {
                 intakeSubsystem.collect();
+            }
+            if(stickyGamepad2.dpad_right) {
+                intakeSubsystem.collectFast();
             }
             if (gamepad2.y) {
                 intakeSubsystem.goToWall();
@@ -71,7 +78,13 @@ public class MainTeleOp extends LinearOpMode {
 
 
             if(gamepad2.dpad_down) extendo.goToGround();
-            if(gamepad2.dpad_up) extendo.goToMax();
+            if(gamepad2.dpad_up) {
+                extendo.goToMax();
+                intakeSubsystem.goDown();
+            }
+
+            extendo.moveFree(gamepad2.right_trigger - gamepad2.left_trigger);
+
 
             //lift control
             if(gamepad1.b) {
@@ -85,7 +98,7 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad1.a) {
                 lift.goToGround();
                 outtakeSubsystem.goToTransfer();
-                if(intakeSubsystem.CS == IntakeSubsystem.IntakeState.TRANSFER) intakeSubsystem.goToReady();
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.TRANSFER) intakeSubsystem.goToReady();
             }
             if(gamepad1.dpad_left) outtakeSubsystem.goToSampleScore();
 
@@ -108,7 +121,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Match Time", matchTimer.seconds());
             telemetry.addData("Lift", lift.currentPos);
             telemetry.addData("Extendo", extendo.currentPos);
-            telemetry.addData("Intake", intakeSubsystem.CS);
+            telemetry.addData("Intake", intakeSubsystem.intakeState);
+            telemetry.addData("intakeTimer", robotSystems.timerCollect.milliseconds());
+            telemetry.addData("extendoPID", extendo.pidEnabled);
 
             telemetry.update();
         }

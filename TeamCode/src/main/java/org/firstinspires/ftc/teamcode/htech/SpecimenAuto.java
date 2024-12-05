@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.htech;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
+@Config
 @Autonomous(name = "[AUTO] Specimen", group = "HTECH")
 public class SpecimenAuto extends LinearOpMode {
     ChassisMovement chassisMovement;
@@ -75,15 +79,19 @@ public class SpecimenAuto extends LinearOpMode {
 
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -26.5, PRELOAD_Y = 0, PRELOAD_ANGLE;
-    public static double SAFE11_X = 25, SAFE11_Y = 8.3, SAFE11_ANGLE;
-    public static double SAFE12_X = -133.1, SAFE12_Y = 43.2, SAFE12_ANGLE;
-    public static double SAMPLE1_X = -3, SAMPLE1_Y = 35.6, SAMPLE1_ANGLE = 0;
 
-    public static double SAFE2_X = -113.6, SAFE2_Y = 40.1, SAFE2_ANGLE;
-    public static double SAMPLE2_X = -3, SAMPLE2_Y = 45.6, SAMPLE2_ANGLE = 0;
+    public static double SAFE11_X = 0, SAFE11_Y = 8.3, SAFE11_ANGLE;
+    //public static double SAFE12_X = -133.1, SAFE12_Y = 43.2, SAFE12_ANGLE;
+    public static double SAMPLE1_X = -48, SAMPLE1_Y = 33, SAMPLE1_ANGLE = 0;
+    public static double HUMAN1_X = -5, HUMAN1_Y = 33, HUMAN1_ANGLE = 0;
 
-    public static double SAFE3_X = -120, SAFE3_Y = 57, SAFE3_ANGLE;
-    public static double SAMPLE3_X = -3, SAMPLE3_Y = 50, SAMPLE3_ANGLE = 0;
+    public static double SAFE2_X = -28, SAFE2_Y = 20, SAFE2_ANGLE;
+    public static double SAMPLE2_X = -48, SAMPLE2_Y = 38, SAMPLE2_ANGLE = 0;
+    public static double HUMAN2_X = -5, HUMAN2_Y = 38, HUMAN2_ANGLE = 0;
+
+    public static double SAFE3_X = -28, SAFE3_Y = 35, SAFE3_ANGLE;
+    public static double SAMPLE3_X = -48, SAMPLE3_Y = 50, SAMPLE3_ANGLE = 0;
+    public static double HUMAN3_X = -5, HUMAN3_Y = 50, HUMAN3_ANGLE = 0;
 
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = -10, SAFE_SPECIMEN_ANGLE;
 
@@ -95,6 +103,7 @@ public class SpecimenAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassisMovement = new ChassisMovement(hardwareMap);
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         outtakeSubsystem = new OuttakeSubsystem(hardwareMap);
@@ -105,6 +114,7 @@ public class SpecimenAuto extends LinearOpMode {
         matchTimer = new ElapsedTime();
 
         follower = new Follower(hardwareMap);
+        outtakeSubsystem.claw.close();
 
 
         goToPreload = new Path(new BezierLine(new Point(START_X,START_Y, Point.CARTESIAN), new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)));
@@ -118,8 +128,15 @@ public class SpecimenAuto extends LinearOpMode {
                         new BezierCurve(
                                 new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN),
                                 new Point(SAFE11_X, SAFE11_Y, Point.CARTESIAN),
-                                new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
+                                //new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
                                 new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(PRELOAD_ANGLE)
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
+                                new Point(HUMAN1_X, HUMAN1_Y, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(PRELOAD_ANGLE)
@@ -131,12 +148,19 @@ public class SpecimenAuto extends LinearOpMode {
                 .addPath(
                         // Line 1
                         new BezierCurve(
-                                new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN),
+                                new Point(HUMAN1_X,HUMAN1_Y, Point.CARTESIAN),
                                 new Point(SAFE2_X, SAFE2_Y, Point.CARTESIAN),
                                 new Point(SAMPLE2_X,SAMPLE2_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(SAMPLE1_ANGLE)
+                .setConstantHeadingInterpolation(SAMPLE2_ANGLE)
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
+                                new Point(HUMAN2_X, HUMAN2_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(SAMPLE2_ANGLE)
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -144,12 +168,19 @@ public class SpecimenAuto extends LinearOpMode {
                 .addPath(
                         // Line 1
                         new BezierCurve(
-                                new Point(SAMPLE2_X,SAMPLE2_Y, Point.CARTESIAN),
+                                new Point(HUMAN2_X,HUMAN2_Y, Point.CARTESIAN),
                                 new Point(SAFE3_X, SAFE3_Y, Point.CARTESIAN),
                                 new Point(SAMPLE3_X,SAMPLE3_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(SAMPLE2_ANGLE)
+                .setConstantHeadingInterpolation(SAMPLE3_ANGLE)
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
+                                new Point(HUMAN3_X, HUMAN3_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(SAMPLE3_ANGLE)
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -225,7 +256,7 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case MOVING:
-                    if(!follower.isBusy() ||  follower.getCurrentTValue() > 0.99) {
+                    if(!follower.isBusy()/* ||  follower.getCurrentTValue() > 0.99 */) {
                         firstTime = true;
                         CS = NS;
                     }
@@ -252,6 +283,7 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case PLACING_PRELOAD:
+                    follower.setMaxPower(1);
                     if(firstTime) {
                         lift.goToMagicPos();
                         firstTime = false;
@@ -280,12 +312,12 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case SAMPLE2:
-                    follower.setMaxPower(0.6);
-                    follower.followPath(goTo2Sample, true);
-
-                    NS = STATES.SAMPLE3;
-                    firstTime = true;
-                    CS = STATES.MOVING;
+//                    follower.setMaxPower(0.6);
+//                    follower.followPath(goTo2Sample, true);
+//
+//                    NS = STATES.SAMPLE3;
+//                    firstTime = true;
+//                    CS = STATES.MOVING;
                     break;
                 case SAMPLE3:
                     follower.setMaxPower(0.6);
@@ -297,6 +329,10 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
             }
 
+
+            telemetry.addData("Current State", CS);
+            telemetry.addData("Next State", NS);
+            telemetry.update();
 
             robotSystems.update();
             follower.update();

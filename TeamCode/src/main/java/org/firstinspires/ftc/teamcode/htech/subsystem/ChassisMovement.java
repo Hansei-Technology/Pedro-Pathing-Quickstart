@@ -59,10 +59,10 @@ public class ChassisMovement {
     }
 
     public void updateMovementReverse(Gamepad g){
-        leftFrontMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
-        rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
-        leftRearMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
-        rightRearMotor.setPower((g.left_stick_y - g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
+        leftFrontMotor.setPower((g.left_stick_y - g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
+        rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
+        leftRearMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
+        rightRearMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
     }
 
     public void updateMovementSlowRotation(Gamepad g){
@@ -73,9 +73,9 @@ public class ChassisMovement {
     }
 
     public void updateMovementSlowRotationReverse(Gamepad g){
-        leftFrontMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
-        rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * 0.3) * speed);
-        leftRearMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
-        rightRearMotor.setPower((g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
+        leftFrontMotor.setPower((g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
+        rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
+        leftRearMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * 0.3) * speed);
+        rightRearMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
     }
 }

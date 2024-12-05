@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.htech.subsystem;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -78,6 +79,22 @@ public class LiftSystem {
         target_position = PositionsLift.park;
         pidController.targetValue = target_position;
     }
+
+    public void goToMinusPark() {
+        target_position = -PositionsLift.park;
+        pidController.targetValue = target_position;
+    }
+
+    public void reset() {
+        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        currentPos = 0;
+        target_position = 0;
+
+    }
+
 
 
 
