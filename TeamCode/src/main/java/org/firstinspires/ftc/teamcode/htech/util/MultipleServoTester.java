@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.htech.classes.HanseiTelemetry;
+import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -23,10 +24,13 @@ public class MultipleServoTester extends LinearOpMode {
     private HanseiTelemetry htelemetry;
 
     public static boolean configure = true;
+    public static int pos_leftServo = 0;
+    public static int pos_rightServo = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         MultipleTelemetry mtelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        StickyGamepad stickyGamepad = new StickyGamepad(gamepad1, this);
         htelemetry = new HanseiTelemetry(mtelemetry);
         htelemetry.clear();
 
@@ -86,9 +90,26 @@ public class MultipleServoTester extends LinearOpMode {
 
         htelemetry.clear();
 
+        for (int i = 0; i < servos.length; i++) {
+            positions[i] = servoInstances[i].getPosition();
+        }
+
+        FtcDashboard.getInstance().updateConfig();
+
         while (opModeIsActive()) {
+            selectionLogic(stickyGamepad);
+
+            htelemetry.info("Selected Left Servo: " + pos_leftServo + " | " + servos[pos_leftServo]);
+            htelemetry.info("Position: " + positions[pos_leftServo]);
+            htelemetry.info("Selected Right Servo: " + pos_rightServo + " | " + servos[pos_rightServo]);
+            htelemetry.info("Position: " + positions[pos_rightServo]);
+
+            positionsLogic(stickyGamepad);
+            updatePositions(servoInstances);
+
             htelemetry.status("RUNNING");
             htelemetry.update();
+            FtcDashboard.getInstance().updateConfig();
         }
     }
 
@@ -117,5 +138,47 @@ public class MultipleServoTester extends LinearOpMode {
         }
 
         FtcDashboard.getInstance().updateConfig();
+    }
+
+    /**
+     * Handles the selection logic for the servos.
+     * @param gamepad A sticky gamepad to be used for the logic.
+     */
+    private void selectionLogic(StickyGamepad gamepad) {
+        if (gamepad.left_bumper) {
+            pos_leftServo++;
+            if (pos_leftServo >= length) pos_leftServo = 0;
+        }
+
+        if (gamepad.right_bumper) {
+            pos_rightServo++;
+            if (pos_rightServo >= length) pos_rightServo = 0;
+        }
+    }
+
+    /**
+     * Handles changing the positions for the servos.
+     * @param gamepad A sticky gamepad to be used for the logic.
+     */
+    private void positionsLogic(StickyGamepad gamepad) {
+        if (gamepad.dpad_up && positions[pos_leftServo] < 1)
+            positions[pos_leftServo] += 0.01;
+        else if (gamepad.dpad_down && positions[pos_leftServo] > 0)
+            positions[pos_leftServo] -= 0.01;
+
+        if (gamepad.y && positions[pos_rightServo] < 1)
+            positions[pos_rightServo] += 0.01;
+        else if (gamepad.a && positions[pos_rightServo] > 0)
+            positions[pos_rightServo] -= 0.01;
+    }
+
+    /**
+     * Updates all the servo positions.
+     * @param servos All the servo instances.
+     */
+    private void updatePositions(Servo[] servos) {
+        for (int i = 0; i < servos.length; i++) {
+            servos[i].setPosition(positions[i]);
+        }
     }
 }
