@@ -28,8 +28,8 @@ public class LiftSystem {
         left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        left.setDirection(DcMotorEx.Direction.REVERSE);
-        right.setDirection(DcMotorEx.Direction.FORWARD);
+        right.setDirection(DcMotorEx.Direction.REVERSE);
+        left.setDirection(DcMotorEx.Direction.FORWARD);
 
         pidController = new PIDController(PositionsLift.kP, PositionsLift.kI, PositionsLift.kD);
         pidController.targetValue = target_position;
