@@ -36,6 +36,7 @@ public class RobotSystems {
         INTAKE_DOWN,
         INTAKE_WALL,
         READY_TO_TRANSFER,
+        CATCHING,
         WAITING_TO_CATCH,
         TRANSFER_READY,
         LIFT_GOING_UP,
@@ -125,14 +126,19 @@ public class RobotSystems {
             case READY_TO_TRANSFER:
                 if (timer.milliseconds() > RobotSettings.timeReady_Transfer) {
                     timer.reset();
-                    intakeSubsystem.claw.open();
                     outtakeSubsystem.claw.close();
+                    transferState = TransferStates.CATCHING;
+                }
+                break;
+            case CATCHING:
+                if(timer.milliseconds() > RobotSettings.timeToCatch) {
+                    timer.reset();
+                    intakeSubsystem.claw.open();
                     transferState = TransferStates.WAITING_TO_CATCH;
                 }
                 break;
-
             case WAITING_TO_CATCH:
-                if (timer.milliseconds() > RobotSettings.timeToCatch) {
+                if (timer.milliseconds() > RobotSettings.timeWaitingToCatch) {
                     timer.reset();
                     intakeSubsystem.goToWall();
                     transferState = TransferStates.TRANSFER_READY;

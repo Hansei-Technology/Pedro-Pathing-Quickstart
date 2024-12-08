@@ -19,7 +19,7 @@ public abstract class PositionsIntake {
     // INTAKE BAR //
     public static double groundPositionBar = 0.565; // over the samples
     public static double wallPositionBar = 0.43;
-    public static double transferPositionBar = 0.245; // maybe change this
+    public static double transferPositionBar = 0.235; // maybe change this
     public static double collectPositionBar = 0.61; // collect position = lower than ground
     public static double offsetBar = 0; //difference between the two bars
 
@@ -27,7 +27,7 @@ public abstract class PositionsIntake {
     public static double groundPositionJoint = 0.53;
     public static double wallPickupPositionJoint = 0.40;
     public static double prepTransferPositionJoint = 0.23;
-    public static double finalTransferPositionJoint = 0.185;
+    public static double finalTransferPositionJoint = 0.18;
     public static double collectPositionJoint = 0.53;
 
 }

@@ -16,7 +16,8 @@ public abstract class RobotSettings {
     public static int timeDown_Transfer = 450;
     public static int timeWall_Transfer = 550;
     public static int timeReady_Transfer = 600;
-    public static int timeToCatch = 300;
+    public static int timeToCatch = 150;
+    public static int timeWaitingToCatch = 300;
     public static int timeToCloseOuttake = 150;
 
     public static int timeToCollect = 300;

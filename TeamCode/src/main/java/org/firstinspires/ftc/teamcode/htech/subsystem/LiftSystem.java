@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.htech.subsystem;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.htech.classes.PIDController;
@@ -14,6 +17,7 @@ public class LiftSystem {
     int target_position = 0;
     public PIDController pidController;
     public int currentPos = 0;
+    public boolean PIDON = true;
 
     public LiftSystem(HardwareMap hardwareMap) {
         left = hardwareMap.get(DcMotorEx.class, Motors.lift2);
@@ -42,31 +46,37 @@ public class LiftSystem {
     }
 
     public void goToGround() {
+        PIDON = true;
         target_position = PositionsLift.ground;
         pidController.targetValue = target_position;
     }
 
     public void goToHighChamber() {
+        PIDON = true;
         target_position = PositionsLift.highChamber;
         pidController.targetValue = target_position;
     }
 
     public void goToLowChamber() {
+        PIDON = true;
         target_position = PositionsLift.lowChamber;
         pidController.targetValue = target_position;
     }
 
     public void goToLowBasket() {
+        PIDON = true;
         target_position = PositionsLift.lowBasket;
         pidController.targetValue = target_position;
     }
 
     public void goToHighBasket() {
+        PIDON = true;
         target_position = PositionsLift.highBasket;
         pidController.targetValue = target_position;
     }
 
     public void goToMagicPos() {
+        PIDON = true;
         target_position = PositionsLift.magic;
         pidController.targetValue = target_position;
     }
@@ -85,14 +95,24 @@ public class LiftSystem {
         pidController.targetValue = target_position;
     }
 
-    public void reset() {
+    public void reset(Gamepad g) {
+        left.setPower(0);
+        right.setPower(0);
+
         left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        try {
+            sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         currentPos = 0;
         target_position = 0;
-
+        g.rumble(100);
+        PIDON = true;
     }
 
 
@@ -103,8 +123,10 @@ public class LiftSystem {
     }
 
     public void update() {
-        currentPos = left.getCurrentPosition();
-        double power = pidController.update(currentPos);
-        setPower(power);
+        if(PIDON) {
+            currentPos = left.getCurrentPosition();
+            double power = pidController.update(currentPos);
+            setPower(power);
+        }
     }
 }

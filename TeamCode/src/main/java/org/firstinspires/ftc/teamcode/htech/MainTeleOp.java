@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
@@ -26,7 +27,6 @@ public class MainTeleOp extends LinearOpMode {
     ElapsedTime matchTimer;
     RobotSystems robotSystems;
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         // SUBSYSTEMS //
@@ -48,9 +48,9 @@ public class MainTeleOp extends LinearOpMode {
 
         matchTimer.reset();
 
-        lift.goToMinusPark();
+        //lift.goToMinusPark();
         sleep(300);
-        lift.reset();
+        //lift.reset();
         while (opModeIsActive()) {
 
             chassisMovement.move(gamepad1);
@@ -77,7 +77,10 @@ public class MainTeleOp extends LinearOpMode {
             if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 
 
-            if(gamepad2.dpad_down) extendo.goToGround();
+            if(gamepad2.dpad_down)  {
+                extendo.goToGround();
+                intakeSubsystem.goToWall();
+            }
             if(gamepad2.dpad_up) {
                 extendo.goToMax();
                 intakeSubsystem.goDown();
@@ -115,6 +118,15 @@ public class MainTeleOp extends LinearOpMode {
             stickyGamepad2.update();
             stickyGamepad1.update();
             robotSystems.update();
+
+            if(gamepad1.dpad_down) {
+                while (gamepad1.dpad_down) {
+                    lift.setPower(-0.35);
+                }
+                lift.setPower(0);
+                lift.reset(gamepad1);
+                gamepad1.rumble(100);
+            }
 
             //telemetry:
             telemetry.addData("[STATUS]", "Main Teleop is running.");

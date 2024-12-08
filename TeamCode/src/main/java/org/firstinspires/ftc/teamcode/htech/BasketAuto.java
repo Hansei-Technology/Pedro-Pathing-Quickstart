@@ -55,26 +55,26 @@ public class BasketAuto extends OpMode {
     private Path goToPreload;
 
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
-    public static double PRELOAD_X = -26.5, PRELOAD_Y = 0, PRELOAD_ANGLE;
+    public static double PRELOAD_X = -26, PRELOAD_Y = 0, PRELOAD_ANGLE;
     public static double SAFE_X = -7, SAFE_Y = -10, SAFE_ANGLE;
     public static double SAFE_BASKET_X = -20, SAFE_BASKET_Y = -10, SAFE_BASKET_ANGLE;
-    public static double SAMPLE1_X = -30, SAMPLE1_Y = -37, SAMPLE1_ANGLE = 180;
-    public static double SAMPLE2_X = -39, SAMPLE2_Y = -39.5, SAMPLE2_ANGLE = 270;
-    public static double SAMPLE3_X = -39, SAMPLE3_Y = -39.5, SAMPLE3_ANGLE = 270;
-    public static double BASKET1_X = -14, BASKET1_Y = -38.5, BASKET1_ANGLE = 120;
-    public static double BASKET2_X = -14, BASKET2_Y = -38.5, BASKET2_ANGLE = 123;
-    public static double BASKET3_X = -14, BASKET3_Y = -38.5, BASKET3_ANGLE = 125;
+    public static double SAMPLE1_X = -30.5, SAMPLE1_Y = -37, SAMPLE1_ANGLE = 180;
+    public static double SAMPLE2_X = -39.5, SAMPLE2_Y = -39.5, SAMPLE2_ANGLE = 270;
+    public static double SAMPLE3_X = -39.3, SAMPLE3_Y = -39.5, SAMPLE3_ANGLE = 270;
+    public static double BASKET1_X = -13, BASKET1_Y = -38.5, BASKET1_ANGLE = 120;
+    public static double BASKET2_X = -13, BASKET2_Y = -38.5, BASKET2_ANGLE = 123;
+    public static double BASKET3_X = -13, BASKET3_Y = -38.5, BASKET3_ANGLE = 125;
     public static double PARK_X = -55, PARK_Y = -14.3, PARK_ANGLE = 270;
     public static double SAFE_PARK_X = -52, SAFE_PARK_Y = -38, SAFE_PARK_ANGLE;
 
-    public static int timeToPreload = 200;
+    public static int timeToPreload = 400;
     public static int timeToSample = 200;
-    public static int timeToCollect1 = 1000;
-    public static int timeToCollect2 = 1000;
+    public static int timeToCollect1 = 1200;
+    public static int timeToCollect2 = 1200;
     public static int timeToCollect3 = 1500;
-    public static int time_to_transfer = 500;
-    public static int time_to_lift = 650;
-    public static int time_to_drop = 800;
+    public static int time_to_transfer = 600;
+    public static int time_to_lift = 750;
+    public static int time_to_drop = 950;
 
 
     public static int extendoPoz3 = 350;
@@ -317,7 +317,7 @@ public class BasketAuto extends OpMode {
                 if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo1Basket, true);
-                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
+                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN; //start transfer
                     NS = STATES.BASKET1;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
@@ -468,7 +468,8 @@ public class BasketAuto extends OpMode {
                 break;
 
             case PARKED:
-                lift.goToPark();
+                //lift.goToGround();
+                //lift.goToPark();
                 break;
 
         }
