@@ -138,11 +138,11 @@ public class SpecimenAuto extends LinearOpMode {
 
 
         goToPreload = new Path(new BezierLine(new Point(START_X,START_Y, Point.CARTESIAN), new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)));
-        goToPreload.setConstantHeadingInterpolation(PRELOAD_ANGLE);
+        goToPreload.setConstantHeadingInterpolation(Math.toRadians(START_ANGLE));
 //        goToPreload.setReversed(true);
         follower.setMaxPower(0.6);
         safeScoring = new Path(new BezierLine(new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN), new Point(SAFE4_X, SAFE4_Y, Point.CARTESIAN)));
-        safeScoring.setConstantHeadingInterpolation(PRELOAD_ANGLE);
+        safeScoring.setConstantHeadingInterpolation(Math.toRadians(PRELOAD_ANGLE));
 
         goTo1Sample = follower.pathBuilder()
                 .addPath(
@@ -154,14 +154,14 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(SAMPLE1_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE))
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
                                 new Point(HUMAN1_X, HUMAN1_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(HUMAN1_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(HUMAN1_ANGLE))
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -174,14 +174,14 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(SAMPLE2_X,SAMPLE2_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(SAMPLE2_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE))
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
                                 new Point(HUMAN2_X, HUMAN2_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(HUMAN2_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(HUMAN2_ANGLE))
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -194,14 +194,14 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(SAMPLE3_X,SAMPLE3_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(SAMPLE3_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE))
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
                                 new Point(HUMAN3_X, HUMAN3_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(HUMAN3_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(HUMAN3_ANGLE))
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -212,12 +212,9 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(SAFE4_X, SAFE4_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(SAFE4_ANGLE)
+                .setConstantHeadingInterpolation(Math.toRadians(SAFE4_ANGLE))
                 .setPathEndTimeoutConstraint(500)
                 .build();
-
-
-
 
         goTo1Specimen = follower.pathBuilder()
                 .addPath(
@@ -226,7 +223,7 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE), Math.toRadians(SPECIMEN1_ANGLE))
+                .setConstantHeadingInterpolation(Math.toRadians(Math.toRadians(PRELOAD_ANGLE)))
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -240,10 +237,6 @@ public class SpecimenAuto extends LinearOpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE), Math.toRadians(SPECIMEN2_ANGLE))
                 .setPathEndTimeoutConstraint(500)
                 .build();
-
-
-
-
 
         goTo3Specimen = follower.pathBuilder()
                 .addPath(
@@ -270,7 +263,6 @@ public class SpecimenAuto extends LinearOpMode {
         follower.followPath(goToPreload);
 
         waitForStart();
-
 
         while (opModeIsActive()) {
 
