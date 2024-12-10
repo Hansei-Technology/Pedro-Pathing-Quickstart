@@ -368,7 +368,9 @@ public class SpecimenAuto extends LinearOpMode {
                 case COLLECTING1:
                     follower.setMaxPower(0.4);
                     follower.followPath(goTo1Specimen);
-                    SCORING_CS = SCORING_STATES.SPECIMEN1;
+                    if(SCORING_CS == SCORING_STATES.IDLE){
+                        SCORING_CS = SCORING_STATES.SPECIMEN1;
+                    }
                     NS = STATES.COLLECTING2;
                     CS = STATES.MOVING;
                     break;
