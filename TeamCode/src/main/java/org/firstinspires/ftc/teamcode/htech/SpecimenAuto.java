@@ -80,10 +80,11 @@ public class SpecimenAuto extends LinearOpMode {
     public enum SCORING_STATES{
         SPECIMEN1,
         SPECIMEN2,
-        SPECIMEN3
+        SPECIMEN3,
+        IDLE
     }
 
-    public SCORING_STATES SCORING_CS = SCORING_STATES.SPECIMEN1;
+    public SCORING_STATES SCORING_CS = SCORING_STATES.IDLE;
 
     public static int timeToPreload = 200;
     public static int timeToSample = 200;
@@ -359,14 +360,15 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
                 case SAFE4:
                     follower.setMaxPower(0.6);
-                    follower.followPath(goToSafe4);
+                    follower.followPath(goToSafe4, true);
                     NS = STATES.SPECIMEN1;
                     firstTime = true;
                     CS = STATES.MOVING;
                     break;
                 case COLLECTING1:
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.4);
                     follower.followPath(goTo1Specimen);
+                    SCORING_CS = SCORING_STATES.SPECIMEN1;
                     NS = STATES.COLLECTING2;
                     CS = STATES.MOVING;
                     break;
@@ -384,7 +386,7 @@ public class SpecimenAuto extends LinearOpMode {
                 case SAFE_SCORE:
                     intakeSubsystem.goToWall();
                     follower.setMaxPower(0.6);
-                    follower.followPath(safeScoring);
+                    follower.followPath(safeScoring, true);
                     CS = STATES.COLLECTING1;
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1){
                         SCORING_CS = SCORING_STATES.SPECIMEN2;
