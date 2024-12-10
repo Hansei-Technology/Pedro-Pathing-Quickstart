@@ -257,7 +257,7 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(PARK_X, PARK_Y, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SPECIMEN3_ANGLE), Math.toRadians(PARK_ANGLE))
+                .setLinearHeadingInterpolation(Math.toRadians(SPECIMEN1_ANGLE), Math.toRadians(PARK_ANGLE))
                 .setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -394,6 +394,10 @@ public class SpecimenAuto extends LinearOpMode {
                         SCORING_CS = SCORING_STATES.SPECIMEN2;
                     }
                     break;
+                case PARK:
+                    follower.setMaxPower(0.8);
+                    follower.followPath(goToPark);
+                    lift.goToGround();
             }
 
 
