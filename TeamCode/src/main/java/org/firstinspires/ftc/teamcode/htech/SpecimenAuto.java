@@ -111,7 +111,7 @@ public class SpecimenAuto extends LinearOpMode {
     public static double SAFE3_X = 95, SAFE3_Y = 128, SAFE3_ANGLE;
     public static double SAMPLE3_X = 87, SAMPLE3_Y = 140, SAMPLE3_ANGLE = -180;
     public static double HUMAN3_X = 130, HUMAN3_Y = 140, HUMAN3_ANGLE = -180;
-    public static double SAFE4_X = 130, SAFE4_Y = 120, SAFE4_ANGLE = 0;
+    public static double SAFE4_X = 130, SAFE4_Y = 120, SAFE4_ANGLE = -180;
 
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = -10, SAFE_SPECIMEN_ANGLE;
 
