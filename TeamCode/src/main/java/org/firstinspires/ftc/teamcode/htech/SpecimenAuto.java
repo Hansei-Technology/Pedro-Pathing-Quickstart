@@ -308,7 +308,7 @@ public class SpecimenAuto extends LinearOpMode {
                         firstTime = false;
                     }
 
-                    if(lift.isAtPosition()) {
+                    if(lift.isAtPosition() && SCORING_CS == SCORING_STATES.IDLE) {
                         outtakeSubsystem.claw.open();
                         NS = STATES.SAMPLE1;
                         firstTime = true;
@@ -317,16 +317,18 @@ public class SpecimenAuto extends LinearOpMode {
                         timer.reset();
                     }
 
-                    if(SCORING_CS == SCORING_STATES.SPECIMEN1){
-                        CS = STATES.SAFE_SCORE;
+                    if(SCORING_CS == SCORING_STATES.SPECIMEN1 && NS == STATES.SAMPLE1){
+                        NS = STATES.SAFE_SCORE;
+                        break;
                     }
-                    if(SCORING_CS == SCORING_STATES.SPECIMEN2){
-                        CS = STATES.SAFE_SCORE;
+                    if(SCORING_CS == SCORING_STATES.SPECIMEN2 && NS == STATES.SAMPLE1){
+                        NS = STATES.SAFE_SCORE;
                         SCORING_CS = SCORING_STATES.SPECIMEN3;
                         break;
                     }
-                    if(SCORING_CS == SCORING_STATES.SPECIMEN3){
-                        CS = STATES.PARK;
+                    if(SCORING_CS == SCORING_STATES.SPECIMEN3 && NS == STATES.SAMPLE1){
+                        NS = STATES.PARK;
+                        break;
                     }
                     break;
                 case SAMPLE1:
