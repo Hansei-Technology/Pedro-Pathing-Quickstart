@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
@@ -96,28 +97,28 @@ public class SpecimenAuto extends LinearOpMode {
 
     //start pose 135, 83
 
-    public static double START_X = 135, START_Y = 86, START_ANGLE = -180;
-    public static double PRELOAD_X = 108.5, PRELOAD_Y = 86, PRELOAD_ANGLE = START_ANGLE;
+    public static double START_X = 135 -135, START_Y = 86 -86, START_ANGLE = -180;
+    public static double PRELOAD_X = 108.5 -135, PRELOAD_Y = 86 -86, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE1_X = 135, SAFE1_Y = 94.3, SAFE11_ANGLE;
-    public static double SAMPLE1_X = 87, SAMPLE1_Y = 119, SAMPLE1_ANGLE = -180;
-    public static double HUMAN1_X = 130, HUMAN1_Y = 119, HUMAN1_ANGLE = -180;
+    public static double SAFE1_X = 135 -135, SAFE1_Y = 94.3 -86, SAFE11_ANGLE;
+    public static double SAMPLE1_X = 87 -135, SAMPLE1_Y = 119 -86, SAMPLE1_ANGLE = -180;
+    public static double HUMAN1_X = 130 -135, HUMAN1_Y = 119 -86, HUMAN1_ANGLE = -180;
 
-    public static double SAFE2_X = 87, SAFE2_Y = 108, SAFE2_ANGLE;
-    public static double SAMPLE2_X = 87, SAMPLE2_Y = 130, SAMPLE2_ANGLE = -180;
-    public static double HUMAN2_X = 130, HUMAN2_Y = 130, HUMAN2_ANGLE = -180;
+    public static double SAFE2_X = 87 -135, SAFE2_Y = 108 -86, SAFE2_ANGLE;
+    public static double SAMPLE2_X = 87 -135, SAMPLE2_Y = 130 -86, SAMPLE2_ANGLE = -180;
+    public static double HUMAN2_X = 130 -135, HUMAN2_Y = 130 -86, HUMAN2_ANGLE = -180;
 
-    public static double SAFE3_X = 95, SAFE3_Y = 128, SAFE3_ANGLE;
-    public static double SAMPLE3_X = 87, SAMPLE3_Y = 140, SAMPLE3_ANGLE = -180;
-    public static double HUMAN3_X = 130, HUMAN3_Y = 140, HUMAN3_ANGLE = -180;
-    public static double SAFE4_X = 130, SAFE4_Y = 120, SAFE4_ANGLE = -180;
+    public static double SAFE3_X = 95 -135, SAFE3_Y = 128 -86, SAFE3_ANGLE;
+    public static double SAMPLE3_X = 87 -135, SAMPLE3_Y = 140 -86, SAMPLE3_ANGLE = -180;
+    public static double HUMAN3_X = 130 -135, HUMAN3_Y = 140 -86, HUMAN3_ANGLE = -180;
+    public static double SAFE4_X = 130 -135, SAFE4_Y = 120 -86, SAFE4_ANGLE = -180;
 
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = -10, SAFE_SPECIMEN_ANGLE;
 
-    public static double SPECIMEN1_X = 140, SPECIMEN1_Y = 120, SPECIMEN1_ANGLE = 0;
-    public static double SPECIMEN2_X = -14, SPECIMEN2_Y = -38.5, SPECIMEN2_ANGLE = 123;
-    public static double SPECIMEN3_X = -14, SPECIMEN3_Y = -38.5, SPECIMEN3_ANGLE = 125;
-    public static double PARK_X = 140, PARK_Y = 120, PARK_ANGLE = 90;
+    public static double SPECIMEN1_X = 140 -135, SPECIMEN1_Y = 120 -86, SPECIMEN1_ANGLE = 0;
+    public static double SPECIMEN2_X = -14 -135, SPECIMEN2_Y = -38.5 -86, SPECIMEN2_ANGLE = 123;
+    public static double SPECIMEN3_X = -14 -135, SPECIMEN3_Y = -38.5 -86, SPECIMEN3_ANGLE = 125;
+    public static double PARK_X = 140 -135, PARK_Y = 120 -86, PARK_ANGLE = 90;
     public static double SAFE_PARK_X = -52, SAFE_PARK_Y = -38, SAFE_PARK_ANGLE;
 
     @Override
@@ -133,6 +134,7 @@ public class SpecimenAuto extends LinearOpMode {
         matchTimer = new ElapsedTime();
 
         follower = new Follower(hardwareMap);
+        follower.setStartingPose(new Pose(START_X, START_Y, START_ANGLE));
         outtakeSubsystem.claw.close();
 
 
