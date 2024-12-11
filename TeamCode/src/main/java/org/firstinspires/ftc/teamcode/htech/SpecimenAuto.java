@@ -32,7 +32,6 @@ public class SpecimenAuto extends LinearOpMode {
     RobotSystems robotSystems;
     ElapsedTime timer;
     ElapsedTime matchTimer;
-    IntakeClaw cleste;
 
     private Follower follower;
     private Path safeScoring;
@@ -124,7 +123,6 @@ public class SpecimenAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        cleste = new IntakeClaw(hardwareMap);
         chassisMovement = new ChassisMovement(hardwareMap);
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         outtakeSubsystem = new OuttakeSubsystem(hardwareMap);
@@ -362,7 +360,7 @@ public class SpecimenAuto extends LinearOpMode {
                 case SAFE4:
                     follower.setMaxPower(0.6);
                     follower.followPath(goToSafe4, true);
-                    NS = STATES.SPECIMEN1;
+                    NS = STATES.COLLECTING1;
                     firstTime = true;
                     CS = STATES.MOVING;
                     break;
@@ -376,7 +374,7 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case COLLECTING2:
-                    cleste.close();
+                    intakeSubsystem.claw.close();
                     robotSystems.transferState = RobotSystems.TransferStates.INTAKE_WALL;
                     CS = STATES.TRANSFERING;
                     NS = STATES.SCORE1;
@@ -388,6 +386,7 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
                 case SAFE_SCORE:
                     intakeSubsystem.goToWall();
+                    robotSystems.transferState = RobotSystems.TransferStates.INTAKE_WALL;
                     follower.setMaxPower(0.6);
                     follower.followPath(safeScoring, true);
                     CS = STATES.COLLECTING1;
