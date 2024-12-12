@@ -86,12 +86,12 @@ public class SpecimenAuto extends LinearOpMode {
 
     public SCORING_STATES SCORING_CS = SCORING_STATES.IDLE;
 
-    public static int timeToPreload = 300;
+    public static int timeToPreload = 400;
     public static int timeToSample = 200;
     public static int timeToCollect1 = 1000;
     public static int timeToCollect2 = 1000;
     public static int timeToCollect3 = 1000;
-    public static int time_to_transfer = 500;
+    public static int time_to_transfer = 600;
     public static int time_to_lift = 650;
     public static int time_to_drop = 800;
 
@@ -294,9 +294,8 @@ public class SpecimenAuto extends LinearOpMode {
                             timer.reset();
                             firstTime = false;
                         }
-                        // timer e ca o masura de precautie
                         if(timer.milliseconds() > time_to_transfer) {
-                            lift.goToHighChamber();
+//                            lift.goToHighChamber();
                             firstTime = true;
                             CS = STATES.MOVING;
                         }
@@ -377,9 +376,8 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case COLLECTING2:
-                    // MASURA DE PRECAUTIE
-                    // intakeSubsystem.claw.close();
-                    robotSystems.transferState = RobotSystems.TransferStates.INTAKE_WALL;
+                    intakeSubsystem.claw.close();
+                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
                     CS = STATES.TRANSFERING;
                     NS = STATES.SCORE1;
                     break;
