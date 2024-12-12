@@ -45,6 +45,13 @@ public class IntakeSubsystem {
         claw.open();
     }
 
+    public void initAuto() {
+        joint.goToPreTransfer();
+        bar.goToTransfer();
+        rotation.goToFlipped();
+        claw.open();
+    }
+
     public void goDown() {
         joint.goToPickup();
         bar.goToGround();

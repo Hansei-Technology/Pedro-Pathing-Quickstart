@@ -87,7 +87,7 @@ public class Follower {
     private long[] pathStartTimes;
 
     private boolean followingPathChain;
-    private boolean holdingPosition;
+    public boolean holdingPosition;
     private boolean isBusy;
     private boolean reachedParametricPathEnd;
     private boolean holdPositionAtEnd;

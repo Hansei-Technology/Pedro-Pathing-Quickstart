@@ -28,8 +28,9 @@ public class OuttakeJoint {
     }
 
     public void goToTransfer() {
+        rotLevel = 0;
         servoLeft.setPosition(PositionsOuttake.jointTransferLeft + PositionsOuttake.jointRotation90 * rotLevel);
-        servoRight.setPosition(PositionsOuttake.jointTransferRight + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(PositionsOuttake.jointTransferRight - PositionsOuttake.jointRotation90 * rotLevel);
 
         currentPositionLeft = PositionsOuttake.jointTransferLeft;
         currentPositionRight = PositionsOuttake.jointTransferRight;
@@ -37,7 +38,7 @@ public class OuttakeJoint {
 
     public void goToSpecimenScore() {
         servoLeft.setPosition(PositionsOuttake.jointSpecimenLeft + PositionsOuttake.jointRotation90 * rotLevel);
-        servoRight.setPosition(PositionsOuttake.jointSpecimenRight + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(PositionsOuttake.jointSpecimenRight - PositionsOuttake.jointRotation90 * rotLevel);
 
         currentPositionLeft = PositionsOuttake.jointSpecimenLeft;
         currentPositionRight = PositionsOuttake.jointSpecimenRight;
@@ -45,7 +46,7 @@ public class OuttakeJoint {
 
     public void goToBasketScore() {
         servoLeft.setPosition(PositionsOuttake.jointBasketLeft + PositionsOuttake.jointRotation90 * rotLevel);
-        servoRight.setPosition(PositionsOuttake.jointBasketRight + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(PositionsOuttake.jointBasketRight - PositionsOuttake.jointRotation90 * rotLevel);
 
         currentPositionLeft = PositionsOuttake.jointBasketLeft;
         currentPositionRight = PositionsOuttake.jointBasketRight;
@@ -56,18 +57,18 @@ public class OuttakeJoint {
     }
 
     public void rotateLeft() {
-        rotLevel++;
+        rotLevel--;
         rotLevel %= 4;
 
         servoLeft.setPosition(currentPositionLeft + PositionsOuttake.jointRotation90 * rotLevel);
-        servoRight.setPosition(currentPositionRight + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(currentPositionRight - PositionsOuttake.jointRotation90 * rotLevel);
     }
 
     public void rotateRight() {
-        rotLevel--;
-        rotLevel = (rotLevel + 3) % 4;
+        rotLevel++;
+        rotLevel = (rotLevel + 4) % 4;
 
         servoLeft.setPosition(currentPositionLeft + PositionsOuttake.jointRotation90 * rotLevel);
-        servoRight.setPosition(currentPositionRight + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(currentPositionRight - PositionsOuttake.jointRotation90 * rotLevel);
     }
 }

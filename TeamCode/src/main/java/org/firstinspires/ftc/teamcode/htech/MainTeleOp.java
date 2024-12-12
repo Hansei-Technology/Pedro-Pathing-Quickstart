@@ -107,7 +107,6 @@ public class MainTeleOp extends LinearOpMode {
                 outtakeSubsystem.goToTransfer();
                 if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.TRANSFER) intakeSubsystem.goToReady();
             }
-            if(gamepad1.dpad_left) outtakeSubsystem.goToSampleScore();
 
             if(gamepad1.right_bumper) outtakeSubsystem.claw.open();
             if(gamepad1.left_bumper) robotSystems.scoreSpecimen();
@@ -146,6 +145,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Intake", intakeSubsystem.intakeState);
             telemetry.addData("intakeTimer", robotSystems.timerCollect.milliseconds());
             telemetry.addData("extendoPID", extendo.pidEnabled);
+            telemetry.addData("outtakeRot", robotSystems.outtakeSubsystem.joint.getRot());
 
             telemetry.update();
         }
