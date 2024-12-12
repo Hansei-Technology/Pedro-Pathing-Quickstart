@@ -86,7 +86,7 @@ public class SpecimenAuto extends LinearOpMode {
 
     public SCORING_STATES SCORING_CS = SCORING_STATES.IDLE;
 
-    public static int timeToPreload = 200;
+    public static int timeToPreload = 300;
     public static int timeToSample = 200;
     public static int timeToCollect1 = 1000;
     public static int timeToCollect2 = 1000;
@@ -97,28 +97,28 @@ public class SpecimenAuto extends LinearOpMode {
 
     //start pose 135, 83
 
-    public static double START_X = 135 -135, START_Y = 86 -86, START_ANGLE = -180;
+    public static double START_X = 135 -135, START_Y = 86 -86, START_ANGLE = 0;
     public static double PRELOAD_X = 108.5 -135, PRELOAD_Y = 86 -86, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE1_X = 135 -135, SAFE1_Y = 94.3 -86, SAFE11_ANGLE;
-    public static double SAMPLE1_X = 87 -135, SAMPLE1_Y = 119 -86, SAMPLE1_ANGLE = -180;
-    public static double HUMAN1_X = 130 -135, HUMAN1_Y = 119 -86, HUMAN1_ANGLE = -180;
+    public static double SAFE1_X = 135 -135, SAFE1_Y = 94.3 -86 -9, SAFE11_ANGLE;
+    public static double SAMPLE1_X = 87 -135, SAMPLE1_Y = 119 -86 -9, SAMPLE1_ANGLE = 0;
+    public static double HUMAN1_X = 115 -135, HUMAN1_Y = SAMPLE1_Y, HUMAN1_ANGLE = 0;
 
-    public static double SAFE2_X = 87 -135, SAFE2_Y = 108 -86, SAFE2_ANGLE;
-    public static double SAMPLE2_X = 87 -135, SAMPLE2_Y = 130 -86, SAMPLE2_ANGLE = -180;
-    public static double HUMAN2_X = 130 -135, HUMAN2_Y = 130 -86, HUMAN2_ANGLE = -180;
+    public static double SAFE2_X = 87 -135, SAFE2_Y = 108 -86 -9, SAFE2_ANGLE;
+    public static double SAMPLE2_X = 87 -135, SAMPLE2_Y = 130 -86 -9, SAMPLE2_ANGLE = 0;
+    public static double HUMAN2_X = 115 -135, HUMAN2_Y = SAMPLE2_Y, HUMAN2_ANGLE = 0;
 
-    public static double SAFE3_X = 95 -135, SAFE3_Y = 128 -86, SAFE3_ANGLE;
-    public static double SAMPLE3_X = 87 -135, SAMPLE3_Y = 140 -86, SAMPLE3_ANGLE = -180;
-    public static double HUMAN3_X = 130 -135, HUMAN3_Y = 140 -86, HUMAN3_ANGLE = -180;
-    public static double SAFE4_X = 130 -135, SAFE4_Y = 120 -86, SAFE4_ANGLE = -180;
+    public static double SAFE3_X = 95 -135, SAFE3_Y = 128 -86 -9, SAFE3_ANGLE;
+    public static double SAMPLE3_X = 87 -135, SAMPLE3_Y = 140 -86 -9, SAMPLE3_ANGLE = 0;
+    public static double HUMAN3_X = 115 -135, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 0;
+    public static double SAFE4_X = 115 -135, SAFE4_Y = 120 -86 -9, SAFE4_ANGLE = 0;
 
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = -10, SAFE_SPECIMEN_ANGLE;
 
-    public static double SPECIMEN1_X = 140 -135, SPECIMEN1_Y = 120 -86, SPECIMEN1_ANGLE = 0;
+    public static double SPECIMEN1_X = 140 -135, SPECIMEN1_Y = 120 -86 -9, SPECIMEN1_ANGLE = 0;
     public static double SPECIMEN2_X = -14 -135, SPECIMEN2_Y = -38.5 -86, SPECIMEN2_ANGLE = 123;
     public static double SPECIMEN3_X = -14 -135, SPECIMEN3_Y = -38.5 -86, SPECIMEN3_ANGLE = 125;
-    public static double PARK_X = 140 -135, PARK_Y = 120 -86, PARK_ANGLE = 90;
+    public static double PARK_X = 120 -135, PARK_Y = 120 -86, PARK_ANGLE = 90;
     public static double SAFE_PARK_X = -52, SAFE_PARK_Y = -38, SAFE_PARK_ANGLE;
 
     @Override
