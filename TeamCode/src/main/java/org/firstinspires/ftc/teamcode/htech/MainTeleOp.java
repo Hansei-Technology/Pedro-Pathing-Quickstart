@@ -46,6 +46,10 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        intakeSubsystem.init();
+        outtakeSubsystem.init();
+
+
         matchTimer.reset();
 
         //lift.goToMinusPark();
@@ -70,7 +74,7 @@ public class MainTeleOp extends LinearOpMode {
             }
             //transfer
             if(gamepad2.x) {
-                robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
+                robotSystems.startTransfer();
             }
 
             if (stickyGamepad2.right_bumper) intakeSubsystem.claw.toggle();
@@ -106,13 +110,19 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad1.dpad_left) outtakeSubsystem.goToSampleScore();
 
             if(gamepad1.right_bumper) outtakeSubsystem.claw.open();
-            if(gamepad1.left_bumper) lift.goToMagicPos();
+            if(gamepad1.left_bumper) robotSystems.scoreSpecimen();
 
 
             if(matchTimer.seconds() > 90) { //only in endgame
                 //hang.setPower(-gamepad2.right_stick_y);
             }
 
+            if(stickyGamepad1.dpad_right) {
+                robotSystems.outtakeSubsystem.joint.rotateRight();
+            }
+            if(stickyGamepad1.dpad_left) {
+                robotSystems.outtakeSubsystem.joint.rotateLeft();
+            }
 
 
             stickyGamepad2.update();

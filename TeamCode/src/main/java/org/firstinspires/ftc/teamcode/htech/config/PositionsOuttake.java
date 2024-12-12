@@ -19,10 +19,12 @@ public abstract class PositionsOuttake {
 
     // OUTTAKE JOINT
 
-    public static double jointSpecimenLeft = 0.52;
-    public static double jointSpecimenRight = 0.8;
-    public static double jointTransferLeft = 0.63;
-    public static double jointTransferRight = 0.91;
-    public static double jointBasketLeft = 0.45;
-    public static double jointBasketRight = 0.73;
+    public static double jointSpecimenLeft = 0.36;
+    public static double jointSpecimenRight = 0.41;
+    public static double jointTransferLeft = 0.475;
+    public static double jointTransferRight = 0.525;
+    public static double jointBasketLeft = 0.16;
+    public static double jointBasketRight = 0.49;
+
+    public static double jointRotation90 = 0.04;
 }

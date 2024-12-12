@@ -13,7 +13,7 @@ public class OuttakeClaw {
 
     public OuttakeClaw(HardwareMap hardwareMap) {
         clawServo = hardwareMap.get(Servo.class, Servos.outtakeClaw);
-        clawServo.setPosition(PositionsOuttake.openedClaw);
+//        clawServo.setPosition(PositionsOuttake.openedClaw);
     }
 
     public void open() {

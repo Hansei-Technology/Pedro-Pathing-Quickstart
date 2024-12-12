@@ -38,6 +38,13 @@ public class IntakeSubsystem {
         joint = new IntakeJoint(hardwareMap);
     }
 
+    public void init() {
+        joint.goToPickup();
+        bar.goToGround();
+        rotation.goToFlipped();
+        claw.open();
+    }
+
     public void goDown() {
         joint.goToPickup();
         bar.goToGround();

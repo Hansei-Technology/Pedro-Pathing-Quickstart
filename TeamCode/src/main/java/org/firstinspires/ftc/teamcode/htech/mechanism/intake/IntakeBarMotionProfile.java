@@ -16,13 +16,13 @@ public class IntakeBarMotionProfile {
     public IntakeBarMotionProfile(HardwareMap hardwareMap) {
         barServo = hardwareMap.get(Servo.class, Servos.intakeBarServoLeft);
         barServo2 = hardwareMap.get(Servo.class, Servos.intakeBarServoRight);
-        barServo.setPosition(PositionsIntake.transferPositionBar);
-        barServo2.setPosition(PositionsIntake.transferPositionBar);
+//        barServo.setPosition(PositionsIntake.transferPositionBar);
+//        barServo2.setPosition(PositionsIntake.transferPositionBar);
 
         dualServoController = new DualServoController(barServo, barServo2);
         dualServoController.setTargetPosition(PositionsIntake.transferPositionBar);
 
-        currentPosition = PositionsIntake.transferPositionBar;
+//        currentPosition = PositionsIntake.transferPositionBar;
     }
 
     public void goToGround() {

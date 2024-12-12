@@ -27,6 +27,11 @@ public class OuttakeSubsystem {
         joint = new OuttakeJoint(hardwareMap);
     }
 
+    public void init() {
+        joint.goToTransfer();
+        claw.open();
+    }
+
     public void goToTransfer() {
         joint.goToTransfer();
         claw.open();

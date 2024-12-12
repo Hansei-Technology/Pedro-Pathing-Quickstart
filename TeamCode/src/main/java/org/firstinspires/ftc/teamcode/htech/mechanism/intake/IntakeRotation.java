@@ -12,7 +12,7 @@ public class IntakeRotation {
 
     public IntakeRotation(HardwareMap hardwareMap) {
         rotationServo = hardwareMap.get(Servo.class, Servos.intakeRotationServo);
-        goToNormal();
+//        goToNormal();
     }
 
     public void goToNormal() {

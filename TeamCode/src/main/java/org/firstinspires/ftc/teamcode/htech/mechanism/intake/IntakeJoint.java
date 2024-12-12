@@ -12,8 +12,8 @@ public class IntakeJoint {
 
     public IntakeJoint(HardwareMap hardwareMap) {
         jointServo = hardwareMap.get(Servo.class, Servos.intakeJointServo);
-        jointServo.setPosition(PositionsIntake.prepTransferPositionJoint);
-        currentPosition = PositionsIntake.prepTransferPositionJoint;
+//        jointServo.setPosition(PositionsIntake.prepTransferPositionJoint);
+//        currentPosition = PositionsIntake.prepTransferPositionJoint;
     }
 
     public void goToPickup() {
