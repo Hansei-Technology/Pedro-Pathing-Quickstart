@@ -332,7 +332,7 @@ public class SpecimenAuto extends LinearOpMode {
                     }
                     break;
                 case SAMPLE1:
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.85);
                     follower.followPath(goTo1Sample);
                     outtakeSubsystem.goToTransfer();
                     lift.goToGround();
@@ -345,7 +345,7 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case SAMPLE2:
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.85);
                     follower.followPath(goTo2Sample);
 
                     NS = STATES.SAMPLE3;
@@ -353,7 +353,7 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case SAMPLE3:
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.85);
                     follower.followPath(goTo3Sample);
 
                     NS = STATES.SAFE4;
@@ -368,7 +368,7 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case COLLECTING1:
-                    follower.setMaxPower(0.4);
+                    follower.setMaxPower(0.5);
                     follower.followPath(goTo1Specimen);
                     if(SCORING_CS == SCORING_STATES.IDLE){
                         SCORING_CS = SCORING_STATES.SPECIMEN1;
@@ -391,7 +391,7 @@ public class SpecimenAuto extends LinearOpMode {
                 case SAFE_SCORE:
                     intakeSubsystem.goToWall();
                     robotSystems.transferState = RobotSystems.TransferStates.INTAKE_WALL;
-                    follower.setMaxPower(0.6);
+                    follower.setMaxPower(0.75);
                     follower.followPath(safeScoring, true);
                     CS = STATES.COLLECTING1;
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1){

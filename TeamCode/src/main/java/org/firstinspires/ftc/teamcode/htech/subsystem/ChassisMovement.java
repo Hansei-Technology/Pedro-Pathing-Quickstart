@@ -7,12 +7,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.htech.config.Motors;
 import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 public class ChassisMovement {
     private final DcMotorEx leftFrontMotor;
     private final DcMotorEx rightFrontMotor;
     private final DcMotorEx leftRearMotor;
     private final DcMotorEx rightRearMotor;
+
+//    private final Follower follower;
 
     private static final double speed = RobotSettings.speed;
     private static final double rotationSpeed = RobotSettings.rotationSpeed;
@@ -23,6 +26,8 @@ public class ChassisMovement {
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, Motors.rightFrontMotor);
         leftRearMotor = hardwareMap.get(DcMotorEx.class, Motors.leftRearMotor);
         rightRearMotor = hardwareMap.get(DcMotorEx.class, Motors.rightRearMotor);
+
+//        follower = new Follower(hardwareMap);
 
         // MOTOR CONFIGURATION //
         leftFrontMotor.setDirection(DcMotorEx.Direction.REVERSE);
@@ -37,6 +42,8 @@ public class ChassisMovement {
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+//        follower.startTeleopDrive();
     }
 
     public void move(Gamepad g) {
@@ -56,6 +63,8 @@ public class ChassisMovement {
         rightFrontMotor.setPower((-g.left_stick_y - g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
         leftRearMotor.setPower((-g.left_stick_y - g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
         rightRearMotor.setPower((-g.left_stick_y + g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
+//        follower.setTeleOpMovementVectors(-g.left_stick_y, -g.left_stick_x, -g.right_stick_x);
+//        follower.update();
     }
 
     public void updateMovementReverse(Gamepad g){
@@ -63,6 +72,8 @@ public class ChassisMovement {
         rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
         leftRearMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * rotationSpeed) * speed);
         rightRearMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * rotationSpeed) * speed);
+//        follower.setTeleOpMovementVectors(g.left_stick_y, g.left_stick_x, g.right_stick_x);
+//        follower.update();
     }
 
     public void updateMovementSlowRotation(Gamepad g){
@@ -70,6 +81,8 @@ public class ChassisMovement {
         rightFrontMotor.setPower((-g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
         leftRearMotor.setPower((-g.left_stick_y - g.left_stick_x + g.right_stick_x * 0.3) * speed);
         rightRearMotor.setPower((-g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
+//        follower.setTeleOpMovementVectors(-g.left_stick_y, -g.left_stick_x, -g.right_stick_x);
+//        follower.update();
     }
 
     public void updateMovementSlowRotationReverse(Gamepad g){
@@ -77,5 +90,7 @@ public class ChassisMovement {
         rightFrontMotor.setPower((g.left_stick_y + g.left_stick_x - g.right_stick_x * 0.3) * speed);
         leftRearMotor.setPower((g.left_stick_y + g.left_stick_x + g.right_stick_x * 0.3) * speed);
         rightRearMotor.setPower((g.left_stick_y - g.left_stick_x - g.right_stick_x * 0.3) * speed);
+//        follower.setTeleOpMovementVectors(g.left_stick_y, g.left_stick_x, g.right_stick_x);
+//        follower.update();
     }
 }
