@@ -30,6 +30,8 @@ public class IntakeSubsystem {
     public IntakeState intakeState = IntakeState.DOWN;
 
 
+
+
     public IntakeSubsystem(HardwareMap hardwareMap) {
         // MECHANISM //
         claw = new IntakeClaw(hardwareMap);
