@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.htech.config.Servos;
 
 public class IntakeClaw {
     private final Servo clawServo;
-    private boolean isOpen = false;
+    public boolean isOpen = false;
 
     public IntakeClaw(HardwareMap hardwareMap) {
         clawServo = hardwareMap.get(Servo.class, Servos.intakeClawServo);

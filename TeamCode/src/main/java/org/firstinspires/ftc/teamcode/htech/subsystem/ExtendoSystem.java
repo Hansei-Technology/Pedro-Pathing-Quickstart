@@ -69,7 +69,7 @@ public class ExtendoSystem {
     }
 
     public boolean isDown() {
-        return currentPos < PositionsExtendo.ground + 15 && target_position == PositionsExtendo.ground;
+        return currentPos < PositionsExtendo.ground + 25 && target_position == PositionsExtendo.ground;
     }
 
     public void goToPos(int poz) {

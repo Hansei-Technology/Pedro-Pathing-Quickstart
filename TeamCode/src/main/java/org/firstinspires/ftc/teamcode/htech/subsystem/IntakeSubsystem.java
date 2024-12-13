@@ -58,6 +58,7 @@ public class IntakeSubsystem {
         joint.goToPickup();
         bar.goToGround();
         rotation.goToFlipped();
+        claw.open();
         if(intakeState != intakeState.COLLECTING) intakeState = intakeState.DOWN;
     }
 

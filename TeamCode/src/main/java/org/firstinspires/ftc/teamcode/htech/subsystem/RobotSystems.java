@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.htech.subsystem;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
@@ -33,7 +34,12 @@ public class RobotSystems {
     }
 
     public void startTransfer() {
-        transferState = TransferStates.LIFT_GOING_DOWN;
+        if(intakeSubsystem.claw.isOpen) {
+            intakeSubsystem.claw.close();
+            transferState = TransferStates.CLOSING_CLAW;
+        } else {
+            transferState = TransferStates.LIFT_GOING_DOWN;
+        }
     }
     public void scoreSpecimen() {
         specimenState = SpecimenStates.GOING_TO_SPECIMEN;
@@ -41,6 +47,7 @@ public class RobotSystems {
 
     public enum TransferStates {
         IDLE,
+        CLOSING_CLAW,
         LIFT_GOING_DOWN,
         INTAKE_DOWN,
         INTAKE_WALL,
@@ -71,8 +78,13 @@ public class RobotSystems {
                     timerCollect.reset();
                     firstTime = false;
                 }
-                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDown) {
+                if(timer.milliseconds() > RobotSettings.timeToCollectGoingDown && intakeSubsystem.fastCollect) {
                     intakeSubsystem.claw.close();
+                    timerCollect.reset();
+                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
+                }
+                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDown && !intakeSubsystem.claw.isOpen) {
+                    //intakeSubsystem.claw.close();
                     timerCollect.reset();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
                 }
@@ -86,7 +98,8 @@ public class RobotSystems {
                 }
 
                 if(timerCollect.milliseconds() > RobotSettings.timeToCollect) {
-                    intakeSubsystem.goDown();
+                    intakeSubsystem.goToWall();
+                    extendoSystem.goToGround();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLECT_GOING_UP;
                 }
                 break;
@@ -102,6 +115,13 @@ public class RobotSystems {
     void updateTranfer() {
         switch (transferState) {
             case IDLE:
+                break;
+
+            case CLOSING_CLAW:
+                if(timer.milliseconds() > RobotSettings.timeToCloseClaw) {
+                    timer.reset();
+                    transferState = TransferStates.LIFT_GOING_DOWN;
+                }
                 break;
 
             case LIFT_GOING_DOWN:
@@ -123,7 +143,7 @@ public class RobotSystems {
                 break;
 
             case INTAKE_DOWN:
-                if (liftSystem.isDown() && extendoSystem.isDown() && timer.milliseconds() > RobotSettings.timeDown_Transfer) {
+                if ((liftSystem.isDown() && extendoSystem.isDown() && timer.milliseconds() > RobotSettings.timeDown_Transfer) || timer.milliseconds() > RobotSettings.timeFailedToCloseLift) {
                     intakeSubsystem.goToTransfer();
                     timer.reset();
                     transferState = TransferStates.READY_TO_TRANSFER;
@@ -132,7 +152,7 @@ public class RobotSystems {
                 break;
 
             case INTAKE_WALL:
-                if (liftSystem.isDown() && extendoSystem.isDown() && timer.milliseconds() > RobotSettings.timeWall_Transfer) {
+                if ((liftSystem.isDown() && extendoSystem.isDown() && timer.milliseconds() > RobotSettings.timeWall_Transfer) || timer.milliseconds() > RobotSettings.timeFailedToCloseLift) {
                     intakeSubsystem.goToTransfer();
                     timer.reset();
                     transferState = TransferStates.READY_TO_TRANSFER;

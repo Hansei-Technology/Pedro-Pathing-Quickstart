@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.htech.config.PositionsLift;
 //2 motor lift system with PID
 public class LiftSystem {
     private DcMotorEx left, right;
-    int target_position = 0;
+    public int target_position = 0;
     public PIDController pidController;
     public int currentPos = 0;
     public boolean PIDON = true;
@@ -82,7 +82,7 @@ public class LiftSystem {
     }
 
     public boolean isDown() {
-        return currentPos < PositionsLift.ground + 15 && target_position == PositionsLift.ground;
+        return currentPos < PositionsLift.ground + 25 && target_position == PositionsLift.ground;
     }
 
     public void goToPark() {

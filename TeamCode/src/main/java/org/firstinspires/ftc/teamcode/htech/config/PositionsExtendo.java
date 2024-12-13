@@ -13,5 +13,5 @@ public class PositionsExtendo {
     public static double kI = 0;
     public static double kD = 0;
 
-    public static double freeSpeed = 0.6;
+    public static double freeSpeed = 0.4;
 }
