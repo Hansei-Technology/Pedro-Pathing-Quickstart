@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.config.PositionsLift;
@@ -67,7 +68,9 @@ public class SpecimenAuto extends LinearOpMode {
         WALL,
         COLLECTING,
         SCORE,
-        CHECKPOINT
+        CHECKPOINT,
+        WAIT_CLESTE,
+        WAIT_TRANSFER
 
     }
     public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
@@ -90,10 +93,10 @@ public class SpecimenAuto extends LinearOpMode {
 
     public static int timeToPreload = 0;
     public static int timeToSample = 200;
-    public static int timeToCollect1 = 1000;
+    public static int timeToCollect = 100;
     public static int timeToCollect2 = 1000;
     public static int timeToCollect3 = 1000;
-    public static int time_to_transfer = 1000;
+    public static int time_to_transfer = 600;
     public static int time_to_lift = 650;
     public static int time_to_drop = 800;
     public static int time_to_extend = 150;
@@ -101,9 +104,9 @@ public class SpecimenAuto extends LinearOpMode {
     //start pose 135, 83
 
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
-    public static double PRELOAD_X = 108.5 -135, PRELOAD_Y = -5, PRELOAD_ANGLE = START_ANGLE;
+    public static double PRELOAD_X = -26.5, PRELOAD_Y = 0, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE1_X = -10, SAFE1_Y = 15.8;
+    public static double SAFE1_X = -10, SAFE1_Y = 20;
     public static double SAFE12_X = -40, SAFE12_Y = 16.5;
     public static double SAMPLE1_X = -48, SAMPLE1_Y = 37, SAMPLE1_ANGLE = 0;
     public static double HUMAN1_X = -15, HUMAN1_Y = SAMPLE1_Y, HUMAN1_ANGLE = 0;
@@ -342,14 +345,6 @@ public class SpecimenAuto extends LinearOpMode {
                     }
                     break;
 
-                case TRANSFERING:
-                    //robotSystems.startTransfer();
-                    if(timer.milliseconds() > time_to_transfer) {
-                        firstTime = true;
-                        CS = STATES.MOVING;
-                    }
-                    break;
-
                 case PLACING_PRELOAD:
                     if(firstTime) {
                         lift.goToMagicPos();
@@ -426,11 +421,20 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case COLLECTING: //fostul COLLECTING2; prinde specimenul
-                    robotSystems.startTransfer();
+                    intakeSubsystem.claw.close();
+                    TIME_TO_WAIT = timeToCollect;
                     timer.reset();
-                    CS = STATES.TRANSFERING;
+                    CS = STATES.WAITING;
+                    NS = STATES.TRANSFERING;
+                    break;
+                case TRANSFERING:
+                    robotSystems.startTransfer();
+                    TIME_TO_WAIT = time_to_transfer;
+                    timer.reset();
+                    CS = STATES.WAITING;
                     NS = STATES.SCORE;
                     break;
+
                 case SCORE: //merge sa puncteze specimenul si face transfer
                     follower.setMaxPower(maxSpeed);
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1) {  //goToScore este diferit ca sa nu puna specimenul unul peste altul
