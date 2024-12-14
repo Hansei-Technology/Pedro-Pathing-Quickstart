@@ -127,6 +127,9 @@ public class BasketAuto extends OpMode {
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
 
+        intakeSubsystem.init();
+        outtakeSubsystem.init();
+
         outtakeSubsystem.claw.close();
 
         follower = new Follower(hardwareMap);

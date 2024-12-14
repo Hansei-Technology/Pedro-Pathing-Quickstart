@@ -454,7 +454,7 @@ public class SpecimenAuto extends LinearOpMode {
                     NS = STATES.COLLECTING;
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1){
                         SCORING_CS = SCORING_STATES.SPECIMEN2;
-                    }else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
+                    } else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
                         SCORING_CS = SCORING_STATES.SPECIMEN3;
                     }
                     break;
