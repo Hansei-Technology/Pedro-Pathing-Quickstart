@@ -78,7 +78,7 @@ public class RobotSystems {
                     timerCollect.reset();
                     firstTime = false;
                 }
-                if(timer.milliseconds() > RobotSettings.timeToCollectGoingDown && intakeSubsystem.fastCollect) {
+                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDownFast && intakeSubsystem.fastCollect) {
                     intakeSubsystem.claw.close();
                     timerCollect.reset();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
@@ -91,9 +91,10 @@ public class RobotSystems {
                 break;
             case COLLECTING:
                 firstTime = true;
-                if(intakeSubsystem.fastCollect && timerCollect.milliseconds() > RobotSettings.timeToCollectFast) {
+                if(intakeSubsystem.fastCollect && timerCollect.milliseconds() > RobotSettings.timeToCollect) {
                     transferState = TransferStates.LIFT_GOING_DOWN;
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.DOWN;
+                    timerCollect.reset();
                     intakeSubsystem.fastCollect = false;
                 }
 
@@ -101,11 +102,6 @@ public class RobotSystems {
                     intakeSubsystem.goToWall();
                     extendoSystem.goToGround();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLECT_GOING_UP;
-                }
-                break;
-            case COLECT_GOING_UP:
-                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingUp) {
-                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.DOWN;
                 }
                 break;
         }

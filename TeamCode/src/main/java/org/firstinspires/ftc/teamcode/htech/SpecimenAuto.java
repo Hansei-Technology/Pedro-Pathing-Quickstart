@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.htech;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -49,6 +51,7 @@ public class SpecimenAuto extends LinearOpMode {
     private PathChain goToWall2;
     private PathChain goToPark;
     private PathChain goToCheckpoint;
+    private PathChain failPath;
 
     private enum STATES {
         MOVING,
@@ -79,7 +82,9 @@ public class SpecimenAuto extends LinearOpMode {
     public static double maxSpeed = 1;
     public static double slowSpeed = 0.5;
     public static double preloadSpeed = 0.6;
-
+    public static double mediumSpeed = 0.8;
+    public VoltageSensor voltageSensor;
+    public double voltage;
     boolean firstTime = true;
 
     public enum SCORING_STATES{
@@ -96,7 +101,7 @@ public class SpecimenAuto extends LinearOpMode {
     public static int timeToCollect = 100;
     public static int timeToCollect2 = 1000;
     public static int timeToCollect3 = 1000;
-    public static int time_to_transfer = 600;
+    public static int time_to_transfer = 1000;
     public static int time_to_lift = 650;
     public static int time_to_drop = 800;
     public static int time_to_extend = 150;
@@ -140,6 +145,7 @@ public class SpecimenAuto extends LinearOpMode {
         lift = new LiftSystem(hardwareMap);
         extendo = new ExtendoSystem(hardwareMap);
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
 
@@ -300,11 +306,20 @@ public class SpecimenAuto extends LinearOpMode {
                 //.setPathEndTimeoutConstraint(500)
                 .build();
 
+//        failPath = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(
+//                                new Pose(follower.getPose()),
+//                                new Point()
+//                        )
+//                )
+
         follower.followPath(goToPreload);
 
         waitForStart();
 
         while (opModeIsActive()) {
+            voltage = voltageSensor.getVoltage();
 
             switch(CS) {
                 case PRELOAD:
@@ -324,6 +339,7 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case MOVING:
+                    timer.reset();
                     if (NS == STATES.COLLECTING) {
                         if(follower.getCurrentTValue() > 0.6) {
                             follower.setMaxPower(slowSpeed);
@@ -331,13 +347,18 @@ public class SpecimenAuto extends LinearOpMode {
                         if (follower.getCurrentTValue() > 0.97) {
                         firstTime = true;
                         CS = NS;
+                        break;
                         }
                      }
                     if(!follower.isBusy() || follower.holdingPosition/* ||  follower.getCurrentTValue() > 0.99 */) {
                         firstTime = true;
                         CS = NS;
+                        break;
                     }
-                    break;
+//                    if(follower.getVelocityMagnitude() == 0){
+//                        follower.followPath();
+//                    }
+//                    break;
 
                 case WAITING:
                     if(timer.milliseconds() > TIME_TO_WAIT) {
@@ -436,7 +457,12 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case SCORE: //merge sa puncteze specimenul si face transfer
-                    follower.setMaxPower(maxSpeed);
+                    if(voltage >= 14){
+                        follower.setMaxPower(mediumSpeed);
+                    }
+                    else{
+                        follower.setMaxPower(maxSpeed);
+                    }
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1) {  //goToScore este diferit ca sa nu puna specimenul unul peste altul
                         follower.followPath(goToScore1, true);
                         CS = STATES.PRELOAD;
@@ -480,6 +506,7 @@ public class SpecimenAuto extends LinearOpMode {
             telemetry.addData("Next State", NS);
             telemetry.addData("TransferState", robotSystems.transferState);
             telemetry.addData("TransferTimer", robotSystems.timer.milliseconds());
+            telemetry.addData("voltage", voltage);
             telemetry.update();
 
             robotSystems.update();

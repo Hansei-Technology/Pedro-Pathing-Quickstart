@@ -317,16 +317,16 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                     firstTime = false;
                 }
-                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP || intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.WALL) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo1Basket, true);
-                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN; //start transfer
+                    //robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN; //start transfer
                     NS = STATES.BASKET1;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
                 }
                 if(timer.milliseconds() > timeToCollect1 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.collectFast();
+                    intakeSubsystem.collect(true);
                     timer.reset();
                 }
                 break;
@@ -370,16 +370,16 @@ public class BasketAuto extends OpMode {
                     timer.reset();
                     firstTime = false;
                 }
-                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP || intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.WALL) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo2Basket, true);
-                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
+                    //robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
                     NS = STATES.BASKET2;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
                 }
                 if(timer.milliseconds() > timeToCollect2 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.collectFast();
+                    intakeSubsystem.collect(true);
                     timer.reset();
                 }
                 break;
@@ -423,16 +423,16 @@ public class BasketAuto extends OpMode {
                     firstTime = false;
                     extendo.goToPos(extendoPoz3);
                 }
-                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP) {
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.COLECT_GOING_UP || intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.WALL) {
                     follower.setMaxPower(0.6);
                     follower.followPath(goTo3Basket, true);
-                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
+                    //robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
                     NS = STATES.BASKET3;
                     firstTime = true;
                     CS = STATES.TRANSFERING;
                 }
                 if(timer.milliseconds() > timeToCollect3 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.collectFast();
+                    intakeSubsystem.collect(true);
                     timer.reset();
                 }
                 break;

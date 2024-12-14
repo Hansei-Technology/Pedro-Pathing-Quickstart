@@ -82,18 +82,22 @@ public class IntakeSubsystem {
         intakeState = intakeState.TRANSFER;
     }
 
-    public void collect() { //if the intake is already down collect a pixel, if not go down
+    public void collect(boolean fast) {
+        if(fast){
+            fastCollect = true;//if the intake is already down collect a pixel, if not go down
+        }
         if(intakeState == intakeState.DOWN) {
             joint.goToCollect();
             bar.goToCollect();
             intakeState = intakeState.COLLECT_GOING_DOWN;
         }
+
         else goDown();
     }
 
     public void collectFast() {
-        fastCollect = true;
-        collect();
+//        fastCollect = true;
+//        collect();
     }
 
     public void update() {

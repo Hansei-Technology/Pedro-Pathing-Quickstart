@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
+import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisFollower;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -26,6 +27,7 @@ public class MainTeleOp extends LinearOpMode {
     ElapsedTime timer;
     ElapsedTime matchTimer;
     RobotSystems robotSystems;
+    ChassisFollower chassisFollower;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,6 +41,7 @@ public class MainTeleOp extends LinearOpMode {
         matchTimer = new ElapsedTime();
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        chassisFollower = new ChassisFollower(hardwareMap);
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);
@@ -53,18 +56,18 @@ public class MainTeleOp extends LinearOpMode {
         matchTimer.reset();
 
         //lift.goToMinusPark();
-        sleep(300);
         //lift.reset();
         while (opModeIsActive()) {
 
-            chassisMovement.move(gamepad1);
+//            chassisMovement.move(gamepad1);
+            chassisFollower.move(gamepad1);
 
             //intake
-            if (gamepad2.a) {
-                intakeSubsystem.goDown();
+            if (stickyGamepad2.a) {
+                intakeSubsystem.collect(true);
             }
             if(stickyGamepad2.b) {
-                intakeSubsystem.collect();
+                intakeSubsystem.collect(false);
             }
             if(stickyGamepad2.dpad_right) {
                 intakeSubsystem.collectFast();
@@ -86,7 +89,7 @@ public class MainTeleOp extends LinearOpMode {
                 intakeSubsystem.goToWall();
             }
             if(gamepad2.dpad_up) {
-                extendo.goToMax();
+                extendo.goToPos(230);
                 intakeSubsystem.goDown();
             }
 

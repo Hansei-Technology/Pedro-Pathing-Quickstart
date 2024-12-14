@@ -60,7 +60,7 @@ public class ExtendoSystem {
             if (currentPos <= PositionsExtendo.ground && power < 0) {
                 power = 0;
             }
-            motor.setPower(Math.signum(power) * PositionsExtendo.freeSpeed);
+            motor.setPower(power);
             last = true;
         } else if(last) {
             last = false;
