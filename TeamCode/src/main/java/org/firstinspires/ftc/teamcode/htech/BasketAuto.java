@@ -323,7 +323,7 @@ public class BasketAuto extends OpMode {
                     CS = STATES.TRANSFERING;
                 }
                 if(timer.milliseconds() > timeToCollect1 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.collect();
+                    intakeSubsystem.collectFast();
                     timer.reset();
                 }
                 break;
@@ -376,7 +376,7 @@ public class BasketAuto extends OpMode {
                     CS = STATES.TRANSFERING;
                 }
                 if(timer.milliseconds() > timeToCollect2 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.collect();
+                    intakeSubsystem.collectFast();
                     timer.reset();
                 }
                 break;
@@ -429,7 +429,7 @@ public class BasketAuto extends OpMode {
                     CS = STATES.TRANSFERING;
                 }
                 if(timer.milliseconds() > timeToCollect3 && intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.DOWN) {
-                    intakeSubsystem.collect();
+                    intakeSubsystem.collectFast();
                     timer.reset();
                 }
                 break;
