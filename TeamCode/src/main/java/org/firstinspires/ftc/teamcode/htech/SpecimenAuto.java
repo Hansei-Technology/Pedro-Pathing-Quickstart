@@ -379,6 +379,7 @@ public class SpecimenAuto extends LinearOpMode {
                         CS = STATES.WAITING;
                         TIME_TO_WAIT = timeToPreload;
                         timer.reset();
+                        break;
                     }
 
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1 && NS == STATES.SAMPLE1){
