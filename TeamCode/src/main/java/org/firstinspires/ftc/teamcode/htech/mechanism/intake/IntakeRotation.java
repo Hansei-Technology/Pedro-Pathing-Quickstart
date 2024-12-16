@@ -49,4 +49,9 @@ public class IntakeRotation {
     public boolean isAtPos(){
         return Math.abs(rotationServo.getPosition() - currentPosition) < 0.01;
     }
+
+    public void goToPos(double pos){
+        rotationServo.setPosition(pos);
+        currentPosition = pos;
+    }
 }
