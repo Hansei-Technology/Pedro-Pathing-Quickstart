@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 @Config
-@Autonomous(name = "[AUTO] Specimen", group = "HTECH")
+@Autonomous(name = "[AUTO] 5 Specimene", group = "HTECH")
 public class Specimene5auto extends LinearOpMode {
     ChassisMovement chassisMovement;
     IntakeSubsystem intakeSubsystem;
@@ -486,6 +486,9 @@ public class Specimene5auto extends LinearOpMode {
                     }
                     else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
                         follower.followPath(goToScore3, true);
+                        CS = STATES.PRELOAD;
+                    }else if(SCORING_CS == SCORING_STATES.SPECIMEN4){
+                        follower.followPath(goToScore4, true);
                         CS = STATES.PRELOAD;
                     }
                     break;
