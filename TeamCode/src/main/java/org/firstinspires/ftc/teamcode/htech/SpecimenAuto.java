@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+//import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -79,12 +79,12 @@ public class SpecimenAuto extends LinearOpMode {
     public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
 
-    public static double maxSpeed = 1;
-    public static double slowSpeed = 0.5;
+    public static double maxSpeed = 0.9;
+    public static double slowSpeed = 0.65;
     public static double preloadSpeed = 0.6;
     public static double mediumSpeed = 0.8;
-    public VoltageSensor voltageSensor;
-    public double voltage;
+    //public VoltageSensor voltageSensor;
+    //public double voltage;
     boolean firstTime = true;
 
     public enum SCORING_STATES{
@@ -145,7 +145,7 @@ public class SpecimenAuto extends LinearOpMode {
         lift = new LiftSystem(hardwareMap);
         extendo = new ExtendoSystem(hardwareMap);
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+        //voltageSensor = hardwareMap.voltageSensor.iterator().next();
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
 
@@ -319,7 +319,7 @@ public class SpecimenAuto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            voltage = voltageSensor.getVoltage();
+            //voltage = voltageSensor.getVoltage();
 
             switch(CS) {
                 case PRELOAD:
@@ -345,20 +345,21 @@ public class SpecimenAuto extends LinearOpMode {
                             follower.setMaxPower(slowSpeed);
                         }
                         if (follower.getCurrentTValue() > 0.97) {
-                        firstTime = true;
-                        CS = NS;
-                        break;
+                            follower.setMaxPower(0.3);
+                            firstTime = true;
+                            CS = NS;
                         }
-                     }
+                    }
                     if(!follower.isBusy() || follower.holdingPosition/* ||  follower.getCurrentTValue() > 0.99 */) {
                         firstTime = true;
                         CS = NS;
-                        break;
                     }
+                    break;
 //                    if(follower.getVelocityMagnitude() == 0){
 //                        follower.followPath();
 //                    }
 //                    break;
+
 
                 case WAITING:
                     if(timer.milliseconds() > TIME_TO_WAIT) {
@@ -379,22 +380,18 @@ public class SpecimenAuto extends LinearOpMode {
                         CS = STATES.WAITING;
                         TIME_TO_WAIT = timeToPreload;
                         timer.reset();
-                        break;
                     }
 
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1 && NS == STATES.SAMPLE1){
                         NS = STATES.BACK_TO_WALL;
-                        break;
                     }
                     if(SCORING_CS == SCORING_STATES.SPECIMEN2 && NS == STATES.SAMPLE1){
                         NS = STATES.BACK_TO_WALL;
-                        break;
                     }
                     if(SCORING_CS == SCORING_STATES.SPECIMEN3 && NS == STATES.SAMPLE1){
                         firstTime = true;
                         timer.reset();
                         NS = STATES.PARK;
-                        break;
                     }
                     break;
                 case SAMPLE1: //aduce sample 1 la human
@@ -458,12 +455,12 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case SCORE: //merge sa puncteze specimenul si face transfer
-                    if(voltage >= 14){
-                        follower.setMaxPower(mediumSpeed);
-                    }
-                    else{
+//                    if(voltage >= 14){
+//                        follower.setMaxPower(mediumSpeed);
+//                    }
+//                    else{
                         follower.setMaxPower(maxSpeed);
-                    }
+                    //}
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1) {  //goToScore este diferit ca sa nu puna specimenul unul peste altul
                         follower.followPath(goToScore1, true);
                         CS = STATES.PRELOAD;
@@ -507,7 +504,7 @@ public class SpecimenAuto extends LinearOpMode {
             telemetry.addData("Next State", NS);
             telemetry.addData("TransferState", robotSystems.transferState);
             telemetry.addData("TransferTimer", robotSystems.timer.milliseconds());
-            telemetry.addData("voltage", voltage);
+//            telemetry.addData("voltage", voltage);
             telemetry.update();
 
             robotSystems.update();

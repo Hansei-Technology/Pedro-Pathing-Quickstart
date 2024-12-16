@@ -131,8 +131,8 @@ public class MainTeleOp extends LinearOpMode {
             stickyGamepad1.update();
             robotSystems.update();
 
-            if(gamepad1.dpad_down) {
-                while (gamepad1.dpad_down) {
+            if(gamepad1.left_stick_button) {
+                while (gamepad1.left_stick_button) {
                     lift.setPower(-0.35);
                 }
                 lift.setPower(0);

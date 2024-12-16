@@ -73,8 +73,8 @@ public class BasketAuto extends OpMode {
     public static int timeToCollect2 = 1200;
     public static int timeToCollect3 = 1500;
     public static int time_to_transfer = 600;
-    public static int time_to_lift = 750;
-    public static int time_to_drop = 950;
+    public static int time_to_lift = 850;
+    public static int time_to_drop = 1050;
 
 
     public static int extendoPoz3 = 350;
@@ -281,7 +281,7 @@ public class BasketAuto extends OpMode {
                         firstTime = false;
                     }
                     if(timer.milliseconds() > time_to_transfer) {
-                        lift.goToHighBasket();
+                        //lift.goToHighBasket();
 //                        outtakeSubsystem.goToSampleScore();
                         firstTime = true;
                         CS = STATES.MOVING;
@@ -459,6 +459,7 @@ public class BasketAuto extends OpMode {
 
             case PARK:
                 follower.setMaxPower(0.8);
+
                 follower.followPath(goToPark, true);
                 outtakeSubsystem.goToTransfer();
                 lift.goToGround();
@@ -472,7 +473,7 @@ public class BasketAuto extends OpMode {
 
             case PARKED:
                 //lift.goToGround();
-                //lift.goToPark();
+                lift.goToPark();
                 break;
 
         }
