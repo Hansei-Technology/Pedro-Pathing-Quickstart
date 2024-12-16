@@ -95,6 +95,10 @@ public class IntakeSubsystem {
         else goDown();
     }
 
+    public boolean isAtPos(){
+        return joint.isAtPos() && bar.isAtPos();
+    }
+
     public void collectFast() {
 //        fastCollect = true;
 //        collect();

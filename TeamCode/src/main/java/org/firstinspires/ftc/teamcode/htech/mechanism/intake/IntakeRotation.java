@@ -45,4 +45,8 @@ public class IntakeRotation {
             this.goToFlipped();
         }
     }
+
+    public boolean isAtPos(){
+        return Math.abs(rotationServo.getPosition() - currentPosition) < 0.01;
+    }
 }

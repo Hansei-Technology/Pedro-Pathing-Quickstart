@@ -40,4 +40,8 @@ public class IntakeJoint {
         currentPosition = PositionsIntake.collectPositionJoint;
     }
 
+    public boolean isAtPos(){
+        return Math.abs(jointServo.getPosition() - currentPosition) < 0.01;
+    }
+
 }

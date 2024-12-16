@@ -164,7 +164,7 @@ public class RobotSystems {
                 }
                 break;
             case CATCHING:
-                if(timer.milliseconds() > RobotSettings.timeToCatch) {
+                if(timer.milliseconds() > RobotSettings.timeToCatch /* && intakeSubsystem.isAtPos()*/) {
                     timer.reset();
                     intakeSubsystem.claw.open();
                     transferState = TransferStates.WAITING_TO_CATCH;

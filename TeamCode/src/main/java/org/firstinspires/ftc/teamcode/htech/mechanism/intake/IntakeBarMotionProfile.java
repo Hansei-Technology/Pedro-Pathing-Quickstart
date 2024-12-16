@@ -53,6 +53,10 @@ public class IntakeBarMotionProfile {
         currentPosition = PositionsIntake.collectPositionBar;
     }
 
+    public boolean isAtPos(){
+        return Math.abs(barServo.getPosition() - currentPosition) < 0.01;
+    }
+
     public void update() {
         dualServoController.update();
     }
