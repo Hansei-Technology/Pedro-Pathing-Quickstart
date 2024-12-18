@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
@@ -80,7 +79,8 @@ public class MainTeleOp extends LinearOpMode {
                 robotSystems.startTransfer();
             }
 
-            if (stickyGamepad2.right_bumper) intakeSubsystem.claw.toggle();
+            intakeSubsystem.rotitor.handle(gamepad2);
+
             if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 
 

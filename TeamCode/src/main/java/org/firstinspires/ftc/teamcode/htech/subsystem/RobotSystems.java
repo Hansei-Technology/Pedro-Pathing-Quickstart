@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.htech.subsystem;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
@@ -34,12 +33,7 @@ public class RobotSystems {
     }
 
     public void startTransfer() {
-        if(intakeSubsystem.claw.isOpen) {
-            intakeSubsystem.claw.close();
-            transferState = TransferStates.CLOSING_CLAW;
-        } else {
-            transferState = TransferStates.LIFT_GOING_DOWN;
-        }
+        transferState = TransferStates.LIFT_GOING_DOWN;
     }
     public void scoreSpecimen() {
         specimenState = SpecimenStates.GOING_TO_SPECIMEN;
@@ -79,11 +73,12 @@ public class RobotSystems {
                     firstTime = false;
                 }
                 if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDownFast && intakeSubsystem.fastCollect) {
-                    intakeSubsystem.claw.close();
+                    //TODO: FIGURE OUT HOW TO USE ACTIVE HERE
+                    //intakeSubsystem.rotitor.close ();
                     timerCollect.reset();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
                 }
-                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDown && !intakeSubsystem.claw.isOpen) {
+                if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDown && !intakeSubsystem.rotitor.isOn) {
                     //intakeSubsystem.claw.close();
                     timerCollect.reset();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
@@ -166,7 +161,8 @@ public class RobotSystems {
             case CATCHING:
                 if(timer.milliseconds() > RobotSettings.timeToCatch /* && intakeSubsystem.isAtPos()*/) {
                     timer.reset();
-                    intakeSubsystem.claw.open();
+                    intakeSubsystem.rotitor.spit();
+                    outtakeSubsystem.goToSpecimenScore();
                     transferState = TransferStates.WAITING_TO_CATCH;
                 }
                 break;

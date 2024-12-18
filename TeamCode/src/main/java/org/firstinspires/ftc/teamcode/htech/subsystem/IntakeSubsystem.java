@@ -2,16 +2,15 @@ package org.firstinspires.ftc.teamcode.htech.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeBarMotionProfile;
-import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeClaw;
+import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeRotitor;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeJoint;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeRotation;
 
 @Config
 public class IntakeSubsystem {
-    public final IntakeClaw claw;
+    public final IntakeRotitor rotitor;
     public final IntakeRotation rotation;
     public final IntakeBarMotionProfile bar;
     public final IntakeJoint joint;
@@ -34,7 +33,7 @@ public class IntakeSubsystem {
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
         // MECHANISM //
-        claw = new IntakeClaw(hardwareMap);
+        rotitor = new IntakeRotitor(hardwareMap);
         rotation = new IntakeRotation(hardwareMap);
         bar = new IntakeBarMotionProfile(hardwareMap);
         joint = new IntakeJoint(hardwareMap);
@@ -44,21 +43,18 @@ public class IntakeSubsystem {
         joint.goToPickup();
         bar.goToGround();
         rotation.goToFlipped();
-        claw.open();
     }
 
     public void initAuto() {
         joint.goToPreTransfer();
         bar.goToTransfer();
         rotation.goToFlipped();
-        claw.open();
     }
 
     public void goDown() {
         joint.goToPickup();
         bar.goToGround();
         rotation.goToFlipped();
-        claw.open();
         if(intakeState != intakeState.COLLECTING) intakeState = intakeState.DOWN;
     }
 
@@ -106,5 +102,6 @@ public class IntakeSubsystem {
 
     public void update() {
         bar.update();
+        rotitor.update();
     }
 }

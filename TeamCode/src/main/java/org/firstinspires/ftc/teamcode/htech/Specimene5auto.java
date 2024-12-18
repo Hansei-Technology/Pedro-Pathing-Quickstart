@@ -3,16 +3,13 @@ package org.firstinspires.ftc.teamcode.htech;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.config.PositionsLift;
 import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
-import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeClaw;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -375,7 +372,6 @@ public class Specimene5auto extends LinearOpMode {
                     follower.followPath(goToSample1, true);
                     extendo.goToMax();
                     intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
                     intakeSubsystem.rotation.goToPos(rotationSample1);
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING_SAMPLE;
@@ -392,7 +388,7 @@ public class Specimene5auto extends LinearOpMode {
 
                 case WAIT_COLLECT:
                     if(timer.milliseconds() > TIME_TO_WAIT) {
-                        intakeSubsystem.claw.close();
+                        //intakeSubsystem.rotitor.close();
                         intakeSubsystem.goDown();
                         CS = NS;
                     }
@@ -425,7 +421,6 @@ public class Specimene5auto extends LinearOpMode {
 
                 case WAIT_CLESTE:
                     if(timer.milliseconds() > TIME_TO_WAIT) {
-                        intakeSubsystem.claw.open();
                         CS = NS;
                     }
                     break;
@@ -434,7 +429,6 @@ public class Specimene5auto extends LinearOpMode {
                     follower.followPath(goToSample2, true);
                     extendo.goToMax();
                     intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
                     intakeSubsystem.rotation.goToNormal();
                     CS = STATES.COLLECTING_SAMPLE;
                     break;
@@ -443,7 +437,6 @@ public class Specimene5auto extends LinearOpMode {
                     follower.followPath(goToSample3, true);
                     extendo.goToMax();
                     intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
                     intakeSubsystem.rotation.goToPos(rotationSample3);
                     CS = STATES.COLLECTING_SAMPLE;
                     break;
@@ -459,7 +452,6 @@ public class Specimene5auto extends LinearOpMode {
                     break;
 
                 case COLLECTING_SPECIMEN:
-                    intakeSubsystem.claw.close();
                     TIME_TO_WAIT = timeToCollect;
                     timer.reset();
                     CS = STATES.WAITING;

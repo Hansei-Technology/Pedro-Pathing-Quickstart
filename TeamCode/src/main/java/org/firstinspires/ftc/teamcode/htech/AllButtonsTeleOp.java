@@ -42,7 +42,6 @@ public class AllButtonsTeleOp extends LinearOpMode {
             chassisMovement.updateMovement(gamepad1);
 
             if (stickyGamepad.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
-            if (stickyGamepad.right_bumper) intakeSubsystem.claw.toggle();
             if (stickyGamepad.dpad_right) outtakeSubsystem.claw.toggle();
 
             if (gamepad1.x) {

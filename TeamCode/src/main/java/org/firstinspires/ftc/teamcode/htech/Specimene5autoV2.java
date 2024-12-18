@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.config.PositionsLift;
-import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -420,7 +419,6 @@ public class Specimene5autoV2 extends LinearOpMode {
                     follower.followPath(goToSample1, true);
                     lift.goToGround();
                     intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING_SAMPLE;
                     break;
@@ -431,7 +429,6 @@ public class Specimene5autoV2 extends LinearOpMode {
                     outtakeSubsystem.joint.goToBasketScore();
                     //extendo.goToMax();
                     intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING_SAMPLE;
                     break;
@@ -442,7 +439,6 @@ public class Specimene5autoV2 extends LinearOpMode {
                     outtakeSubsystem.joint.goToBasketScore();
                     //extendo.goToMax();
                     intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING_SAMPLE;
                     break;
@@ -459,7 +455,7 @@ public class Specimene5autoV2 extends LinearOpMode {
                     break;
 
                 case COLLECTING:
-                    intakeSubsystem.claw.close();
+                    //intakeSubsystem.rotitor.close();
                     TIME_TO_WAIT = timeToCollect;
                     timer.reset();
                     CS = STATES.WAITING;

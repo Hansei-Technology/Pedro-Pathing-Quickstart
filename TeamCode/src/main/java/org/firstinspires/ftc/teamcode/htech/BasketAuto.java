@@ -305,7 +305,6 @@ public class BasketAuto extends OpMode {
                 outtakeSubsystem.goToTransfer();
                 lift.goToGround();
                 intakeSubsystem.goDown();
-                intakeSubsystem.claw.open();
 
                 timer.reset();
                 NS = STATES.COLLECTING1;
@@ -358,7 +357,6 @@ public class BasketAuto extends OpMode {
                 lift.goToGround();
                 intakeSubsystem.goDown();
                 intakeSubsystem.rotation.goToPerpendicular();
-                intakeSubsystem.claw.open();
 
                 timer.reset();
                 NS = STATES.COLLECTING2;
@@ -410,7 +408,6 @@ public class BasketAuto extends OpMode {
                 lift.goToGround();
                 intakeSubsystem.goDown();
                 intakeSubsystem.rotation.goToPerpendicular();
-                intakeSubsystem.claw.open();
 
                 timer.reset();
                 NS = STATES.COLLECTING3;
@@ -464,7 +461,6 @@ public class BasketAuto extends OpMode {
                 outtakeSubsystem.goToTransfer();
                 lift.goToGround();
                 intakeSubsystem.goToReady();
-                intakeSubsystem.claw.open();
 
                 timer.reset();
                 NS = STATES.PARKED;

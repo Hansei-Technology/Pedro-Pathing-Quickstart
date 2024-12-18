@@ -3,15 +3,12 @@ package org.firstinspires.ftc.teamcode.htech;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.config.PositionsLift;
-import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeClaw;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -400,7 +397,6 @@ public class SpecimenAuto extends LinearOpMode {
                     outtakeSubsystem.goToTransfer();
                     lift.goToGround();
                     intakeSubsystem.goToWall();
-                    intakeSubsystem.claw.open();
 
                     timer.reset();
                     NS = STATES.SAMPLE2;
@@ -440,7 +436,7 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case COLLECTING: //fostul COLLECTING2; prinde specimenul
-                    intakeSubsystem.claw.close();
+                    //intakeSubsystem.rotitor.close();
                     TIME_TO_WAIT = timeToCollect;
                     timer.reset();
                     CS = STATES.WAITING;
