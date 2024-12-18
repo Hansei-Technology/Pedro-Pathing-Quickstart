@@ -454,13 +454,8 @@ public class SpecimenAuto extends LinearOpMode {
                     NS = STATES.SCORE;
                     break;
 
-                case SCORE: //merge sa puncteze specimenul si face transfer
-//                    if(voltage >= 14){
-//                        follower.setMaxPower(mediumSpeed);
-//                    }
-//                    else{
+                case SCORE:
                         follower.setMaxPower(maxSpeed);
-                    //}
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1) {  //goToScore este diferit ca sa nu puna specimenul unul peste altul
                         follower.followPath(goToScore1, true);
                         CS = STATES.PRELOAD;
