@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Encoder;
 //2 motor lift system with PID
 public class LiftSystem {
     private DcMotorEx left, right;
-    private DcMotorEx encoder;
+    //private DcMotorEx encoder;
     public int target_position = 0;
     public PIDController pidController;
     public int currentPos = 0;
@@ -24,11 +24,13 @@ public class LiftSystem {
     public LiftSystem(HardwareMap hardwareMap) {
         left = hardwareMap.get(DcMotorEx.class, Motors.lift2);
         right = hardwareMap.get(DcMotorEx.class, Motors.lift1);
-        encoder = hardwareMap.get(DcMotorEx.class, Motors.liftEncoder);
+        //encoder = hardwareMap.get(DcMotorEx.class, Motors.liftEncoder);
 
+        //encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
+        //encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -123,7 +125,7 @@ public class LiftSystem {
 
     public void update() {
         if(PIDON) {
-            currentPos = encoder.getCurrentPosition();
+            currentPos = left.getCurrentPosition();
             double power = pidController.update(currentPos);
             setPower(power);
         }
