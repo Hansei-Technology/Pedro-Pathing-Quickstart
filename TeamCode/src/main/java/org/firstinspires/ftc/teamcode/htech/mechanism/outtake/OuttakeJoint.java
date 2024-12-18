@@ -71,4 +71,13 @@ public class OuttakeJoint {
         servoLeft.setPosition(currentPositionLeft + PositionsOuttake.jointRotation90 * rotLevel);
         servoRight.setPosition(currentPositionRight - PositionsOuttake.jointRotation90 * rotLevel);
     }
+
+    public void dropPos(){
+        rotLevel = 0;
+        servoLeft.setPosition(PositionsOuttake.jointDropLeft + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(PositionsOuttake.jointDropRight - PositionsOuttake.jointRotation90 * rotLevel);
+
+        currentPositionLeft = PositionsOuttake.jointDropLeft;
+        currentPositionRight = PositionsOuttake.jointDropRight;
+    }
 }
