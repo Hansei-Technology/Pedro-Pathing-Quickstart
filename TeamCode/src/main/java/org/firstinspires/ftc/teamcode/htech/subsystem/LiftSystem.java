@@ -10,10 +10,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.htech.classes.PIDController;
 import org.firstinspires.ftc.teamcode.htech.config.Motors;
 import org.firstinspires.ftc.teamcode.htech.config.PositionsLift;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Encoder;
 
 //2 motor lift system with PID
 public class LiftSystem {
     private DcMotorEx left, right;
+    private DcMotorEx encoder;
     public int target_position = 0;
     public PIDController pidController;
     public int currentPos = 0;
@@ -22,12 +24,13 @@ public class LiftSystem {
     public LiftSystem(HardwareMap hardwareMap) {
         left = hardwareMap.get(DcMotorEx.class, Motors.lift2);
         right = hardwareMap.get(DcMotorEx.class, Motors.lift1);
+        encoder = hardwareMap.get(DcMotorEx.class, Motors.liftEncoder);
 
         left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        left.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        right.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -101,11 +104,7 @@ public class LiftSystem {
 
         left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        try {
-            sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -124,7 +123,7 @@ public class LiftSystem {
 
     public void update() {
         if(PIDON) {
-            currentPos = left.getCurrentPosition();
+            currentPos = encoder.getCurrentPosition();
             double power = pidController.update(currentPos);
             setPower(power);
         }
