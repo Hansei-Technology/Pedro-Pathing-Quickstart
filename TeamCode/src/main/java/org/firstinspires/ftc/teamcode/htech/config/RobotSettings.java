@@ -36,6 +36,6 @@ public abstract class RobotSettings {
     public static int timeToCollectFast = 200;
 
     public static int time_to_specimen = 200;
-    public static int time_to_spit = 200;
+    public static int time_to_spit = 350;
 
 }

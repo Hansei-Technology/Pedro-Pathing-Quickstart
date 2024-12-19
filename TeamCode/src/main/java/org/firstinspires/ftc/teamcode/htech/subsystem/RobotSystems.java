@@ -46,6 +46,7 @@ public class RobotSystems {
         INTAKE_DOWN,
         INTAKE_WALL,
         READY_TO_TRANSFER,
+        SPITTING,
         CATCHING,
         WAITING_TO_CATCH,
         TRANSFER_READY,
@@ -155,7 +156,15 @@ public class RobotSystems {
                 if (timer.milliseconds() > RobotSettings.timeReady_Transfer) {
                     timer.reset();
                     outtakeSubsystem.claw.close();
+                    transferState = TransferStates.SPITTING;
+                }
+                break;
+            case SPITTING:
+                if(timer.milliseconds() > RobotSettings.time_to_spit) {
+                    timer.reset();
+                    intakeSubsystem.rotitor.spit();
                     transferState = TransferStates.CATCHING;
+
                 }
                 break;
             case CATCHING:

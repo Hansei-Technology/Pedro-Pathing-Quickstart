@@ -80,6 +80,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             intakeSubsystem.rotitor.handle(gamepad2);
+            if(stickyGamepad2.right_stick_button) intakeSubsystem.rotitor.spit();
 
             if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 

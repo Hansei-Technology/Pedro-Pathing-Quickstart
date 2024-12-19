@@ -10,7 +10,7 @@ public class OuttakeJoint {
     private final Servo servoLeft;
     private final Servo servoRight;
 
-    int rotLevel = 0;
+    double rotLevel = 0;
 
 
     private double currentPositionLeft;
@@ -52,7 +52,7 @@ public class OuttakeJoint {
         currentPositionRight = PositionsOuttake.jointBasketRight;
     }
 
-    public int getRot() {
+    public double getRot() {
         return 90 * rotLevel;
     }
 
@@ -66,8 +66,14 @@ public class OuttakeJoint {
 
     public void rotateRight() {
         rotLevel++;
-        rotLevel = (rotLevel + 4) % 4;
+        rotLevel = (int)(rotLevel + 4) % 4;
 
+        servoLeft.setPosition(currentPositionLeft + PositionsOuttake.jointRotation90 * rotLevel);
+        servoRight.setPosition(currentPositionRight - PositionsOuttake.jointRotation90 * rotLevel);
+    }
+
+    public void rotateTo45() {
+        rotLevel = 0.5;
         servoLeft.setPosition(currentPositionLeft + PositionsOuttake.jointRotation90 * rotLevel);
         servoRight.setPosition(currentPositionRight - PositionsOuttake.jointRotation90 * rotLevel);
     }

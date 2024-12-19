@@ -21,10 +21,10 @@ public class IntakeRotitor {
 
     public void handle(Gamepad g) {
         if(g.right_bumper) {
-            servo.setPower(1);
-            isOn = true;
-        } else if(g.touchpad) {
             servo.setPower(-1);
+            isOn = true;
+        } else if(g.dpad_left || isSpitting) {
+            servo.setPower(1);
             isOn = true;
         } else {
             servo.setPower(0);

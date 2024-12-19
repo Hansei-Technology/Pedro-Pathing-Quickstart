@@ -68,7 +68,7 @@ public class IntakeSubsystem {
     public void goToReady() {
         joint.goToPreTransfer();
         bar.goToTransfer();
-        rotation.goToNormal();
+        rotation.goToPerpendicular();
         intakeState = intakeState.READY;
     }
 

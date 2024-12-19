@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class PositionsExtendo {
-    public static int ground = 0;
+    public static int ground = 40;
     public static int transfer = 0;
     public static int max = 380;
     public static int mid = 250;
