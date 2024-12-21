@@ -15,9 +15,10 @@ public abstract class PositionsIntake {
     public static double normalRotation = 0.275;
     public static double perpendicularRotation = 0.56;
     public static double flippedNormalRotation = 0.84;
+    public static double rotation30Deg = 0.095;
 
     // INTAKE BAR //
-    public static double groundPositionBar = 0.585; // over the samples
+    public static double groundPositionBar = 0.58; // over the samples
     public static double wallPositionBar = 0.52;
     public static double transferPositionBar = 0.245; // maybe change this
     public static double collectPositionBar = 0.63; // collect position = lower than ground

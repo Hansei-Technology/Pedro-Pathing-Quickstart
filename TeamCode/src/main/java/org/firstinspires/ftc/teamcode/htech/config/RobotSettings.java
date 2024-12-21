@@ -15,7 +15,7 @@ public abstract class RobotSettings {
 
 
     public static double speed = 1;
-    public static double rotationSpeed = 0.9;
+    public static double rotationSpeed = 0.8;
 
     public static double hangPower = 1;
 

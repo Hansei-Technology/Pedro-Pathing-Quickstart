@@ -99,8 +99,9 @@ public class RobotSystems {
                 }
 
                 if(timerCollect.milliseconds() > RobotSettings.timeToCollect) {
-                    intakeSubsystem.goToWall();
+                    intakeSubsystem.goToReady();
                     extendoSystem.goToGround();
+                    transferState = TransferStates.LIFT_GOING_DOWN;
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLECT_GOING_UP;
                 }
                 break;
@@ -174,6 +175,7 @@ public class RobotSystems {
                 if (timer.milliseconds() > RobotSettings.timeWaitingToCatch) {
                     timer.reset();
                     intakeSubsystem.goToWall();
+                    outtakeSubsystem.goToSpecimenScore();
                     transferState = TransferStates.TRANSFER_READY;
                 }
                 break;

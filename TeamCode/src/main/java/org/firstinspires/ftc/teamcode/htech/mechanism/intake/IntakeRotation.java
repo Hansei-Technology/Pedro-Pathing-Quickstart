@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.htech.mechanism.intake;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.htech.config.PositionsIntake;
+import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
 import org.firstinspires.ftc.teamcode.htech.config.Servos;
 
 public class IntakeRotation {
     private final Servo rotationServo;
     private double currentPosition;
+    public int rotLevel = 0;
 
     public IntakeRotation(HardwareMap hardwareMap) {
         rotationServo = hardwareMap.get(Servo.class, Servos.intakeRotationServo);
@@ -54,4 +57,24 @@ public class IntakeRotation {
         rotationServo.setPosition(pos);
         currentPosition = pos;
     }
+
+
+    public void handleRotation(Gamepad g) {
+        if(g.dpad_left) {
+            rotLevel++;
+        } else if(g.dpad_right) {
+            rotLevel--;
+        }
+
+        if(rotLevel > 3) {
+            rotLevel = 3;
+        } else if(rotLevel < -3) {
+            rotLevel = -3;
+        }
+
+        rotationServo.setPosition(PositionsIntake.flippedNormalRotation + rotLevel * PositionsIntake.rotation30Deg);
+
+    }
+
+
 }
