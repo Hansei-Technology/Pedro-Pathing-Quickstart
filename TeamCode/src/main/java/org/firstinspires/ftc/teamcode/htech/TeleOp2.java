@@ -74,15 +74,15 @@ public class TeleOp2 extends LinearOpMode {
             if (stickyGamepad1.left_bumper) intakeSubsystem.claw.toggle();
 
             //rotations(both of them)
-            if(extendo.isDown()) { //handle outtake rotation
+            if(gamepad2.right_trigger > 0.2q && robotSystems.transferState == RobotSystems.TransferStates.IDLE) { //handle intake rotation
+                intakeSubsystem.rotation.handleRotation(stickyGamepad2.dpad_right, stickyGamepad2.dpad_left);
+            } else {
                 if(stickyGamepad2.dpad_right) {
                     robotSystems.outtakeSubsystem.joint.rotateRight();
                 }
                 if(stickyGamepad2.dpad_left) {
                     robotSystems.outtakeSubsystem.joint.rotateLeft();
                 }
-            } else {
-                intakeSubsystem.rotation.handleRotation(gamepad2);
             }
 
 
@@ -111,12 +111,12 @@ public class TeleOp2 extends LinearOpMode {
 
             //reset lift
             if(gamepad2.dpad_down) {
-                while (gamepad1.left_stick_button) {
+                while (gamepad2.dpad_down) {
                     lift.setPower(-0.35);
                 }
                 lift.setPower(0);
-                lift.reset(gamepad1);
-                gamepad1.rumble(100);
+                lift.reset(gamepad2);
+                gamepad2.rumble(100);
             }
 
             //telemetry:
@@ -128,6 +128,7 @@ public class TeleOp2 extends LinearOpMode {
             telemetry.addData("intakeTimer", robotSystems.timerCollect.milliseconds());
             telemetry.addData("extendoPID", extendo.pidEnabled);
             telemetry.addData("outtakeRot", robotSystems.outtakeSubsystem.joint.getRot());
+            telemetry.addData("intakeRot", intakeSubsystem.rotation.rotLevel);
 
             telemetry.update();
         }

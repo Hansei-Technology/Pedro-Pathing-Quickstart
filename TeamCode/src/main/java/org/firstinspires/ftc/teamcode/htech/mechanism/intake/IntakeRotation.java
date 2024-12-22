@@ -59,17 +59,17 @@ public class IntakeRotation {
     }
 
 
-    public void handleRotation(Gamepad g) {
-        if(g.dpad_left) {
-            rotLevel++;
-        } else if(g.dpad_right) {
+    public void handleRotation(boolean right, boolean left) {
+        if(left) {
             rotLevel--;
+        } else if(right) {
+            rotLevel++;
         }
 
-        if(rotLevel > 3) {
-            rotLevel = 3;
-        } else if(rotLevel < -3) {
-            rotLevel = -3;
+        if(rotLevel > 1) {
+            rotLevel = 1;
+        } else if(rotLevel < -6) {
+            rotLevel = -6;
         }
 
         rotationServo.setPosition(PositionsIntake.flippedNormalRotation + rotLevel * PositionsIntake.rotation30Deg);
