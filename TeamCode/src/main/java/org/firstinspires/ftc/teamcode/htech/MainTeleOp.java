@@ -59,12 +59,13 @@ public class MainTeleOp extends LinearOpMode {
         //lift.reset();
         while (opModeIsActive()) {
 
-//            chassisMovement.move(gamepad1);
-            chassisFollower.move(gamepad1);
+            chassisMovement.move(gamepad1);
+//            chassisFollower.move(gamepad1);
 
             //intake
             if (stickyGamepad2.a) {
-                intakeSubsystem.collect(true);
+                lift.goToHighChamber();
+                outtakeSubsystem.goToSpecimenScore();
             }
             if(stickyGamepad2.b) {
                 intakeSubsystem.collect(false);
@@ -97,10 +98,10 @@ public class MainTeleOp extends LinearOpMode {
 
 
             //lift control
-            if(gamepad1.b) {
-                lift.goToHighChamber();
-                outtakeSubsystem.goToSpecimenScore();
-            }
+//            if(gamepad1.b) {
+//                lift.goToHighChamber();
+//                outtakeSubsystem.goToSpecimenScore();
+//            }
             if(gamepad1.y) {
                 lift.goToHighBasket();
                 outtakeSubsystem.goToSampleScore();
@@ -119,10 +120,10 @@ public class MainTeleOp extends LinearOpMode {
                 //hang.setPower(-gamepad2.right_stick_y);
             }
 
-            if(stickyGamepad1.dpad_right) {
+            if(stickyGamepad2.dpad_left) {
                 robotSystems.outtakeSubsystem.joint.rotateRight();
             }
-            if(stickyGamepad1.dpad_left) {
+            if(stickyGamepad2.dpad_right) {
                 robotSystems.outtakeSubsystem.joint.rotateLeft();
             }
 
