@@ -61,30 +61,43 @@ public class TeleOp2 extends LinearOpMode {
 
             //extendo
             extendo.moveFree(gamepad1.right_trigger - gamepad1.left_trigger);
-            if(gamepad2.dpad_up) {
-                extendo.goToPos(230);
-                intakeSubsystem.goDown();
-            }
+//            if(gamepad2.dpad_up) {
+//                extendo.goToPos(230);
+//                intakeSubsystem.goDown();
+//            }
 
 
             //intake
             if(stickyGamepad1.right_bumper) {
                 intakeSubsystem.collect(false);
             }
+
+            if(stickyGamepad1.x || stickyGamepad2.x){
+                robotSystems.startTransfer();
+            }
+
             if (stickyGamepad1.left_bumper) intakeSubsystem.claw.toggle();
 
             //rotations(both of them)
-            if(gamepad2.right_trigger > 0.2q && robotSystems.transferState == RobotSystems.TransferStates.IDLE) { //handle intake rotation
-                intakeSubsystem.rotation.handleRotation(stickyGamepad2.dpad_right, stickyGamepad2.dpad_left);
-            } else {
-                if(stickyGamepad2.dpad_right) {
-                    robotSystems.outtakeSubsystem.joint.rotateRight();
-                }
-                if(stickyGamepad2.dpad_left) {
-                    robotSystems.outtakeSubsystem.joint.rotateLeft();
-                }
+            if(robotSystems.transferState == RobotSystems.TransferStates.IDLE){
+                intakeSubsystem.rotation.handleRotation(gamepad2.right_trigger - gamepad2.left_trigger);
             }
 
+            if(stickyGamepad2.dpad_left) {
+                robotSystems.outtakeSubsystem.joint.rotateRight();
+            }
+            if(stickyGamepad2.dpad_right) {
+                robotSystems.outtakeSubsystem.joint.rotateLeft();
+            }
+
+            if(gamepad2.dpad_down)  {
+                extendo.goToGround();
+                intakeSubsystem.goToWall();
+            }
+            if(gamepad2.dpad_up) {
+                extendo.goToMax();
+//                intakeSubsystem.goDown();
+            }
 
             //lift
             if(gamepad2.b) {
@@ -110,13 +123,13 @@ public class TeleOp2 extends LinearOpMode {
             robotSystems.update();
 
             //reset lift
-            if(gamepad2.dpad_down) {
-                while (gamepad2.dpad_down) {
+            if(gamepad1.dpad_down) {
+                while (gamepad1.dpad_down) {
                     lift.setPower(-0.35);
                 }
                 lift.setPower(0);
-                lift.reset(gamepad2);
-                gamepad2.rumble(100);
+                lift.reset(gamepad1);
+                gamepad1.rumble(100);
             }
 
             //telemetry:

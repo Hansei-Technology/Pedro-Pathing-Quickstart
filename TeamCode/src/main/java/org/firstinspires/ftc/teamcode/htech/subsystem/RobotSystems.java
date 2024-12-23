@@ -27,7 +27,7 @@ public class RobotSystems {
     public void update() {
         extendoSystem.update();
         liftSystem.update();
-        intakeSubsystem.update();
+//        intakeSubsystem.update();
         updateTranfer();
         updateCollect();
         updateSpecimen();

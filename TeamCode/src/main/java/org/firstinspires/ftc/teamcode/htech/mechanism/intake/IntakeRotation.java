@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.htech.config.Servos;
 public class IntakeRotation {
     private final Servo rotationServo;
     private double currentPosition;
-    public int rotLevel = 0;
+    public double rotLevel = 0;
 
     public IntakeRotation(HardwareMap hardwareMap) {
         rotationServo = hardwareMap.get(Servo.class, Servos.intakeRotationServo);
@@ -59,12 +59,8 @@ public class IntakeRotation {
     }
 
 
-    public void handleRotation(boolean right, boolean left) {
-        if(left) {
-            rotLevel--;
-        } else if(right) {
-            rotLevel++;
-        }
+    public void handleRotation(double pow) {
+        rotLevel += pow * PositionsIntake.rotSpeed;
 
         if(rotLevel > 1) {
             rotLevel = 1;

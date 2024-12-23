@@ -21,8 +21,8 @@ public abstract class PositionsOuttake {
 
     public static double jointSpecimenLeft = 0.565;
     public static double jointSpecimenRight = 0.215;
-    public static double jointTransferLeft = 0.67;
-    public static double jointTransferRight = 0.33;
+    public static double jointTransferLeft = 0.66;
+    public static double jointTransferRight = 0.32;
     public static double jointBasketLeft = 0.21;
     public static double jointBasketRight = 0.44;
     public static double jointDropLeft = 0.06;

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeBar;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeBarMotionProfile;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeClaw;
 import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeJoint;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.htech.mechanism.intake.IntakeRotation;
 public class IntakeSubsystem {
     public final IntakeClaw claw;
     public final IntakeRotation rotation;
-    public final IntakeBarMotionProfile bar;
+    public final IntakeBar bar;
     public final IntakeJoint joint;
 
     boolean fastCollect = false;
@@ -36,7 +37,7 @@ public class IntakeSubsystem {
         // MECHANISM //
         claw = new IntakeClaw(hardwareMap);
         rotation = new IntakeRotation(hardwareMap);
-        bar = new IntakeBarMotionProfile(hardwareMap);
+        bar = new IntakeBar(hardwareMap);
         joint = new IntakeJoint(hardwareMap);
     }
 
@@ -97,16 +98,16 @@ public class IntakeSubsystem {
         else goDown();
     }
 
-    public boolean isAtPos(){
-        return joint.isAtPos() && bar.isAtPos();
-    }
+//    public boolean isAtPos(){
+//        return joint.isAtPos() && bar.isAtPos();
+//    }
 
     public void collectFast() {
 //        fastCollect = true;
 //        collect();
     }
 
-    public void update() {
-        bar.update();
-    }
+//    public void update() {
+//        bar.update();
+//    }
 }
