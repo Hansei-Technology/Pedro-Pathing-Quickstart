@@ -99,9 +99,9 @@ public class RobotSystems {
                 }
 
                 if(timerCollect.milliseconds() > RobotSettings.timeToCollect) {
-                    intakeSubsystem.goToReady();
+                    intakeSubsystem.goToWall();
                     extendoSystem.goToGround();
-                    transferState = TransferStates.LIFT_GOING_DOWN;
+                    //transferState = TransferStates.LIFT_GOING_DOWN;
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLECT_GOING_UP;
                 }
                 break;
