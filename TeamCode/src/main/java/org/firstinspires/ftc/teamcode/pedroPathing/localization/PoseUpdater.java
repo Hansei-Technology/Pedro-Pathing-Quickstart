@@ -72,7 +72,7 @@ public class PoseUpdater {
      */
     public PoseUpdater(HardwareMap hardwareMap) {
         // TODO: replace the second argument with your preferred localizer
-        this(hardwareMap, new TwoWheelPinpointIMULocalizer(hardwareMap));
+        this(hardwareMap, new PinpointLocalizer(hardwareMap));
     }
 
     /**
