@@ -56,7 +56,7 @@ public class TeleOp2 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            chassisMovement.move(gamepad1);
+            chassisMovement.updateMovement(gamepad1);
 //            chassisFollower.move(gamepad1);
 
             //extendo

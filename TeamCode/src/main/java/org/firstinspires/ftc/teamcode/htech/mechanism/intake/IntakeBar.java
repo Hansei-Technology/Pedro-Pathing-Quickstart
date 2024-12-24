@@ -51,5 +51,9 @@ public class IntakeBar {
         currentPosition = PositionsIntake.collectPositionBar;
     }
 
+    public void update() {
+        barServo.setPosition(currentPosition);
+        barServo2.setPosition(currentPosition);
+    }
 
 }

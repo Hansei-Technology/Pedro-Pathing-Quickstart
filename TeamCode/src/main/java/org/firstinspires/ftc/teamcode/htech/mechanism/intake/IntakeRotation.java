@@ -69,7 +69,11 @@ public class IntakeRotation {
         }
 
         rotationServo.setPosition(PositionsIntake.flippedNormalRotation + rotLevel * PositionsIntake.rotation30Deg);
+        currentPosition = PositionsIntake.flippedNormalRotation + rotLevel * PositionsIntake.rotation30Deg;
+    }
 
+    public void update() {
+        rotationServo.setPosition(currentPosition);
     }
 
 

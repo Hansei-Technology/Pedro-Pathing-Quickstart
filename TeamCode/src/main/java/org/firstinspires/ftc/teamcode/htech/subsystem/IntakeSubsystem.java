@@ -107,7 +107,10 @@ public class IntakeSubsystem {
 //        collect();
     }
 
-//    public void update() {
-//        bar.update();
-//    }
+    public void update() {
+        bar.update();
+        joint.update();
+        rotation.update();
+        claw.update();
+    }
 }
