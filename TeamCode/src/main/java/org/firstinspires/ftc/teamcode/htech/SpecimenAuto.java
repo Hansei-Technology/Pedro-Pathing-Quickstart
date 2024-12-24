@@ -112,7 +112,7 @@ public class SpecimenAuto extends LinearOpMode {
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -28.5, PRELOAD_Y = 0, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE1_X = -10, SAFE1_Y = 20;
+    public static double SAFE1_X = -10, SAFE1_Y = 22;
     public static double SAFE12_X = -40, SAFE12_Y = 16.5;
     public static double SAMPLE1_X = -48, SAMPLE1_Y = 37, SAMPLE1_ANGLE = 0;
     public static double HUMAN1_X = -20, HUMAN1_Y = SAMPLE1_Y, HUMAN1_ANGLE = 0;
@@ -122,15 +122,17 @@ public class SpecimenAuto extends LinearOpMode {
     public static double HUMAN2_X = -20, HUMAN2_Y = SAMPLE2_Y, HUMAN2_ANGLE = 0;
 
     public static double SAFE3_X = -40, SAFE3_Y = 40;
-    public static double SAMPLE3_X = -48, SAMPLE3_Y = 52.7, SAMPLE3_ANGLE = 0;
-    public static double HUMAN3_X = -18.5, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 0;
+//    public static double SAMPLE3_X = -48, SAMPLE3_Y = 50, SAMPLE3_ANGLE = 270;
+//    public static double HUMAN3_X = -20, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 270;
+    public static double SAMPLE3_X = -48, SAMPLE3_Y = 52.3, SAMPLE3_ANGLE = 0;
+    public static double HUMAN3_X = -17, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 0;
     public static double CHECKPOINT_X = -20, CHECKPOINT_Y = 30, CHECKPOINT_ANGLE = 0;
 
     public static double SCORE1_X = -28.5, SCORE1_Y = -6.5;
     public static double SCORE2_X = -28.5, SCORE2_Y = -8;
     public static double SCORE3_X = -28.5, SCORE3_Y = -9;
 
-    public static double SPECIMEN_X = -8, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
+    public static double SPECIMEN_X = -8.3, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
 
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = 5;
     public static double SAFE_SPECIMEN2_X = -20, SAFE_SPECIMEN2_Y = SPECIMEN_Y;
@@ -371,10 +373,10 @@ public class SpecimenAuto extends LinearOpMode {
             switch(CS) {
                 case PRELOAD:
 
-                    if (robotSystems.transferState == RobotSystems.TransferStates.IDLE) {
+//                    if (robotSystems.transferState == RobotSystems.TransferStates.IDLE) {
                         lift.goToHighChamber();
                         outtakeSubsystem.goToSpecimenScore();
-                    }
+//                    }
 
                     if (lift.isAtPosition() && lift.target_position == PositionsLift.highChamber) {
                         //outtakeSubsystem.claw.close();
@@ -401,18 +403,23 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case PLACING_PRELOAD:
-                    if(firstTime) {
-                        lift.goToMagicPos();
-                        firstTime = false;
-                    }
+//                    if(firstTime) {
+//                        lift.goToMagicPos();
+//                        firstTime = false;
+//                    }
+//
+//                    if(lift.isAtPosition()) {
+//                        outtakeSubsystem.claw.open();
+//                        firstTime = true;
+//                        CS = STATES.WAITING;
+//                        TIME_TO_WAIT = timeToPreload;
+//                        timer.reset();
+//                    }
 
-                    if(lift.isAtPosition()) {
-                        outtakeSubsystem.claw.open();
-                        firstTime = true;
-                        CS = STATES.WAITING;
-                        TIME_TO_WAIT = timeToPreload;
-                        timer.reset();
-                    }
+                    robotSystems.scoreSpecimen();
+                    timer.reset();
+                    CS = STATES.WAITING;
+                    TIME_TO_WAIT = timeToPreload;
 
                     if(SCORING_CS == SCORING_STATES.IDLE){
                         NS = STATES.COLLECTING_SAMPLES;
@@ -476,7 +483,7 @@ public class SpecimenAuto extends LinearOpMode {
                     CS = STATES.MOVING;
                     break;
                 case WALL: //fostul COLLECTING1; merge la perete pentru a lua specimenul
-                    follower.setMaxPower(slowSpeed);
+                    follower.setMaxPower(maxSpeed);
                     follower.followPath(goToWall, true);
                     NS = STATES.COLLECTING;
                     CS = STATES.MOVING;
@@ -497,6 +504,7 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
 
                 case SCORE:
+                        lift.goToHighChamber();
                         follower.setMaxPower(maxSpeed);
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1) {  //goToScore este diferit ca sa nu puna specimenul unul peste altul
                         follower.followPath(goToScore1, true);
@@ -512,7 +520,7 @@ public class SpecimenAuto extends LinearOpMode {
                     }
                     break;
                 case BACK_TO_WALL://vine de la submersible la urmatorul specimen de pe perete, apoi repeta pasii pentru colectarea si punctarea specimenului
-                    lift.goToGround();
+//                    lift.goToGround();
                     intakeSubsystem.goToWall();
                     follower.setMaxPower(maxSpeed);
                     follower.followPath(goToWall2, true);
