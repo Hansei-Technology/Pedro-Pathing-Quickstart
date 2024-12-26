@@ -122,8 +122,6 @@ public class SpecimenAuto extends LinearOpMode {
     public static double HUMAN2_X = -20, HUMAN2_Y = SAMPLE2_Y, HUMAN2_ANGLE = 0;
 
     public static double SAFE3_X = -40, SAFE3_Y = 40;
-//    public static double SAMPLE3_X = -48, SAMPLE3_Y = 50, SAMPLE3_ANGLE = 270;
-//    public static double HUMAN3_X = -20, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 270;
     public static double SAMPLE3_X = -48, SAMPLE3_Y = 52.3, SAMPLE3_ANGLE = 0;
     public static double HUMAN3_X = -17, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 0;
     public static double CHECKPOINT_X = -20, CHECKPOINT_Y = 30, CHECKPOINT_ANGLE = 0;
@@ -148,7 +146,6 @@ public class SpecimenAuto extends LinearOpMode {
         lift = new LiftSystem(hardwareMap);
         extendo = new ExtendoSystem(hardwareMap);
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
-        //voltageSensor = hardwareMap.voltageSensor.iterator().next();
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
 
@@ -244,7 +241,7 @@ public class SpecimenAuto extends LinearOpMode {
                                 new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(Math.toRadians(PRELOAD_ANGLE)))
+                .setConstantHeadingInterpolation(Math.toRadians(PRELOAD_ANGLE))
                 //.setPathEndTimeoutConstraint(500)
                 .build();
 
@@ -550,7 +547,6 @@ public class SpecimenAuto extends LinearOpMode {
             telemetry.addData("Next State", NS);
             telemetry.addData("TransferState", robotSystems.transferState);
             telemetry.addData("TransferTimer", robotSystems.timer.milliseconds());
-//            telemetry.addData("voltage", voltage);
             telemetry.update();
 
             robotSystems.update();
