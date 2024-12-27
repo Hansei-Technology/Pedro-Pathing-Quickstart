@@ -122,6 +122,7 @@ public class SpecimenAutoFailSafe extends LinearOpMode {
     public static int time_to_lift = 650;
     public static int time_to_drop = 800;
     public static int time_to_extend = 150;
+    public static int timeToEnterFailSafe = 500;
 
     //start pose 135, 83
 
@@ -564,14 +565,14 @@ public class SpecimenAutoFailSafe extends LinearOpMode {
                     break;
 
                 case MOVING:
-                    timer.reset();
                     if(!follower.isBusy()) {
                         firstTime = true;
                         CS = NS;
                     }
 
                     if(follower.getVelocityMagnitude() == 0){
-                        if(timer.milliseconds() > 500){
+                        timer.reset();
+                        if(timer.milliseconds() > timeToEnterFailSafe){
                             if(controlPoint){
                                 if(twoControlPoints){
                                     follower.followPath(failSafe2controlPoints);
