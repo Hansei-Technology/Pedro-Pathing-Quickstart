@@ -18,6 +18,7 @@ public class IntakeSubsystem {
     public final IntakeJoint joint;
 
     boolean fastCollect = false;
+    boolean hopPeSpate = false;
 
     public enum IntakeState {
         DOWN,
@@ -94,13 +95,17 @@ public class IntakeSubsystem {
             bar.goToCollect();
             intakeState = intakeState.COLLECT_GOING_DOWN;
         }
-
         else goDown();
     }
 
-//    public boolean isAtPos(){
-//        return joint.isAtPos() && bar.isAtPos();
-//    }
+    public void hopPeSpateCollect(){
+        joint.goToCollect();
+        bar.goToCollect();
+        intakeState = intakeState.COLLECT_GOING_DOWN;
+        fastCollect = true;
+        hopPeSpate = true;
+    }
+
 
     public void collectFast() {
 //        fastCollect = true;

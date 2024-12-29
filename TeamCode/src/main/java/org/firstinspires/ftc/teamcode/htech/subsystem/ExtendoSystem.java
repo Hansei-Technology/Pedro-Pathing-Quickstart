@@ -45,6 +45,12 @@ public class ExtendoSystem {
         pidController.targetValue = target_position;
     }
 
+    public void goToMaxAuto(){
+        pidEnabled = true;
+        target_position = PositionsExtendo.maxAuto;
+        pidController.targetValue = target_position;
+    }
+
     public void goToMid() {
         pidEnabled = true;
         target_position = PositionsExtendo.mid;

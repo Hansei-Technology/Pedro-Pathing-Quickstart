@@ -31,6 +31,7 @@ public class RobotSystems {
         updateTranfer();
         updateCollect();
         updateSpecimen();
+        updateHopPeSpate();
     }
 
     public void startTransfer() {
@@ -41,6 +42,8 @@ public class RobotSystems {
             transferState = TransferStates.LIFT_GOING_DOWN;
         }
     }
+
+
     public void scoreSpecimen() {
         specimenState = SpecimenStates.GOING_TO_SPECIMEN;
     }
@@ -59,6 +62,15 @@ public class RobotSystems {
     }
     public TransferStates transferState = TransferStates.IDLE;
 
+    public enum HopPeSpateStates {
+        IDLE,
+        CASE1,
+        CASE2,
+        CASE3,
+        CASE4,
+        CASE5
+    }
+    public HopPeSpateStates hopPeSpateState = HopPeSpateStates.IDLE;
 
     public boolean firstTime = true;
 
@@ -80,6 +92,7 @@ public class RobotSystems {
                 }
                 if(timerCollect.milliseconds() > RobotSettings.timeToCollectGoingDownFast && intakeSubsystem.fastCollect) {
                     intakeSubsystem.claw.close();
+                    outtakeSubsystem.joint.goToTransfer();
                     timerCollect.reset();
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.COLLECTING;
                 }
@@ -91,11 +104,19 @@ public class RobotSystems {
                 break;
             case COLLECTING:
                 firstTime = true;
-                if(intakeSubsystem.fastCollect && timerCollect.milliseconds() > RobotSettings.timeToCollect) {
+                if(!intakeSubsystem.hopPeSpate && intakeSubsystem.fastCollect && timerCollect.milliseconds() > RobotSettings.timeToCollect) {
                     transferState = TransferStates.LIFT_GOING_DOWN;
                     intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.DOWN;
                     timerCollect.reset();
                     intakeSubsystem.fastCollect = false;
+                }
+
+                if(intakeSubsystem.hopPeSpate && intakeSubsystem.fastCollect && timerCollect.milliseconds() > RobotSettings.timeToCollect) {
+                    hopPeSpateState = HopPeSpateStates.CASE1;
+                    intakeSubsystem.intakeState = IntakeSubsystem.IntakeState.DOWN;
+                    timerCollect.reset();
+                    intakeSubsystem.fastCollect = false;
+                    intakeSubsystem.hopPeSpate = false;
                 }
 
                 if(timerCollect.milliseconds() > RobotSettings.timeToCollect) {
@@ -214,5 +235,28 @@ public class RobotSystems {
                 }
                 break;
         }
+    }
+
+    public void updateHopPeSpate(){
+        switch (hopPeSpateState) {
+            case IDLE:
+                break;
+
+            case CASE1:
+                outtakeSubsystem.joint.catapultarePos();
+                extendoSystem.goToGround();
+                intakeSubsystem.goToReady();
+                hopPeSpateState = HopPeSpateStates.CASE2;
+                timer.reset();
+                break;
+
+            case CASE2:
+                if(timer.milliseconds() > RobotSettings.timeToHopPeSpate) {
+                    intakeSubsystem.claw.open();
+                    hopPeSpateState = HopPeSpateStates.IDLE;
+                }
+                break;
+        }
+
     }
 }

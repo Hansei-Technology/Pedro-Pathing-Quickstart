@@ -58,6 +58,11 @@ public class IntakeRotation {
         currentPosition = pos;
     }
 
+    public void goToAutoPos(){
+        rotationServo.setPosition(PositionsIntake.rotationAuto);
+        currentPosition = PositionsIntake.rotationAuto;
+    }
+
 
     public void handleRotation(double pow) {
         rotLevel += pow * PositionsIntake.rotSpeed;

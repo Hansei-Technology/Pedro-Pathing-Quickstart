@@ -60,13 +60,16 @@ public class SpecimenAuto5 extends LinearOpMode {
         IDLE,
         SPECIMEN1, SPECIMEN2, SPECIMEN3, SPECIMEN4
     }
-    STATES CS = STATES.NULL, NS = STATES.NULL;
+    STATES CS = STATES.SPECIMEN, NS = STATES.NULL;
     SCORING_STATES SCORING_CS = SCORING_STATES.IDLE;
 
 
     //Timers
     public static int timeToCollect = 100;
     public static int timeToTransfer = 800;
+    public static int timeToHop = 1400;
+    public static int timeToScoreSpecimen = 400;
+    public static int magicTime = 600;
     public int TIME_TO_WAIT = 0;
 
 
@@ -85,23 +88,25 @@ public class SpecimenAuto5 extends LinearOpMode {
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -28.5, PRELOAD_Y = 0, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE_X = 0, SAFE_Y = 12;
-    public static double SAMPLE1_X = -20, SAMPLE1_Y = 37, SAMPLE1_ANGLE = 180;
+    public static double SAFE_X = 0, SAFE_Y = 0;
+    public static double SAMPLE1_X = -7.5, SAMPLE1_Y = 26.9, SAMPLE1_ANGLE = 180;
 
-    public static double SAMPLE2_X = -20, SAMPLE2_Y = 45, SAMPLE2_ANGLE = 180;
-    public static double SAMPLE3_X = -20, SAMPLE3_Y = 52.3, SAMPLE3_ANGLE = 180;
+    public static double SAMPLE2_X = -7.5, SAMPLE2_Y = 36.3, SAMPLE2_ANGLE = 180;
+    public static double SAMPLE3_X = -11, SAMPLE3_Y = 34.3, SAMPLE3_ANGLE = 150;
 
     public static double SCORE1_X = -28.5, SCORE1_Y = -3;
     public static double SCORE2_X = -28.5, SCORE2_Y = -4;
     public static double SCORE3_X = -28.5, SCORE3_Y = -5;
     public static double SCORE4_X = -28.5, SCORE4_Y = -6;
 
-    public static double SAFE_WALL_X = -48, SAFE_WALL_Y = 40;
+    public static double SAFE_WALL_X = -28.5, SAFE_WALL_Y = 0;
     public static double SPECIMEN_X = -8.3, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = 5;
     public static double SAFE_SPECIMEN2_X = -20, SAFE_SPECIMEN2_Y = SPECIMEN_Y;
 
     public static double PARK_X = -10, PARK_Y = 30, PARK_ANGLE = 80;
+
+    public static double CHECKPOINT_X = -20, CHECKPOINT_Y = 30, CHECKPOINT_ANGLE = 0;
 
     public static double COLLECT1_X = SAMPLE1_X, COLLECT1_Y = SAMPLE1_Y, COLLECT1_ANGLE = SAMPLE1_ANGLE;
     public static double COLLECT2_X = SAMPLE2_X, COLLECT2_Y = SAMPLE2_Y, COLLECT2_ANGLE = SAMPLE2_ANGLE;
@@ -164,7 +169,7 @@ public class SpecimenAuto5 extends LinearOpMode {
                                 new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE))
+                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE), Math.toRadians(SAMPLE3_ANGLE))
                 .build();
 
         goToCollect1 = follower.pathBuilder()
@@ -199,13 +204,19 @@ public class SpecimenAuto5 extends LinearOpMode {
 
         goToWall = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
-                                new Point(SAFE_WALL_X, SAFE_WALL_Y, Point.CARTESIAN),
+                                new Point(CHECKPOINT_X, CHECKPOINT_Y, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE), Math.toRadians(CHECKPOINT_ANGLE))
+                .addPath(
+                        new BezierLine(
+                                new Point(CHECKPOINT_X, CHECKPOINT_Y, Point.CARTESIAN),
                                 new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE), Math.toRadians(SPECIMEN_ANGLE))
+                .setConstantHeadingInterpolation(SPECIMEN_ANGLE)
                 .build();
 
         backToWall = follower.pathBuilder()
@@ -277,7 +288,6 @@ public class SpecimenAuto5 extends LinearOpMode {
         //Starting trajectory
         follower.setMaxPower(maxSpeed);
         follower.followPath(goToPreload);
-        CS = STATES.SPECIMEN;
 
         waitForStart();
 
@@ -296,122 +306,115 @@ public class SpecimenAuto5 extends LinearOpMode {
                     break;
 
                 case MOVING:
-                    timer.reset();
-                    CS = NS;
                     if(!follower.isBusy()) {
-                        break;
+                        CS = NS;
                     }
+                    break;
 
                 case WAITING:
                     if(timer.milliseconds() > TIME_TO_WAIT){
                         CS = NS;
-                        if(dropping){
-                            outtakeSubsystem.joint.goToBasketScore();
-                            dropping = false;
-                        }
-                        if(sample3){
-                            outtakeSubsystem.claw.open();
-                            sample3 = false;
-                        }
                     }
                     break;
 
                 case PLACING_SPECIMEN:
-                    robotSystems.scoreSpecimen();
-                    if(SCORING_CS == SCORING_STATES.IDLE){
-                        NS = STATES.SAMPLE1;
-                    }
-                    else if(SCORING_CS == SCORING_STATES.SPECIMEN1){
-                        NS = STATES.BACK_TO_WALL;
-                    }
-                    else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
-                        NS = STATES.BACK_TO_WALL;
-                    }
-                    else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
-                        NS = STATES.BACK_TO_WALL;
-                    }
-                    else if(SCORING_CS == SCORING_STATES.SPECIMEN4){
-                        NS = STATES.PARK;
+                    lift.goToMagicPos();
+                    if(lift.isAtPosition()){
+                        outtakeSubsystem.claw.open();
+                        CS = STATES.WAITING;
+                        timer.reset();
+                        TIME_TO_WAIT = timeToScoreSpecimen;
+                        if(SCORING_CS == SCORING_STATES.IDLE){
+                            NS = STATES.SAMPLE1;
+                        }
+                        else if(SCORING_CS == SCORING_STATES.SPECIMEN1){
+                            NS = STATES.BACK_TO_WALL;
+                        }
+                        else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
+                            NS = STATES.BACK_TO_WALL;
+                        }
+                        else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
+                            NS = STATES.BACK_TO_WALL;
+                        }
+                        else if(SCORING_CS == SCORING_STATES.SPECIMEN4){
+                            NS = STATES.PARK;
+                        }
                     }
                     break;
 
                 case SAMPLE1:
-                    follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToSample1);
+                    lift.goToGround();
+                    follower.setMaxPower(mediumSpeed);
+                    follower.followPath(goToSample1, true);
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING1;
+                    intakeSubsystem.goDown();
+                    intakeSubsystem.claw.open();
+                    timer.reset();
                     break;
 
                 case COLLECTING1:
-                    extendo.goToMax();
-                    follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToCollect1, true);
-                    intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
-                    if(extendo.isAtPosition()){
-                        intakeSubsystem.collect(true);
+                    extendo.goToMaxAuto();
+                    if(extendo.isAtPosition() && timer.milliseconds() > magicTime){
+                        intakeSubsystem.hopPeSpateCollect();
                         CS = STATES.WAITING;
                         NS = STATES.SAMPLE2;
                         timer.reset();
-                        TIME_TO_WAIT = timeToTransfer;
-                        dropping = true;
+                        TIME_TO_WAIT = timeToHop;
                     }
                     break;
 
                 case SAMPLE2:
-                    outtakeSubsystem.claw.open();
-                    follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToSample2);
+                    follower.setMaxPower(mediumSpeed);
+                    follower.followPath(goToSample2, true);
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING2;
+                    intakeSubsystem.goDown();
+                    intakeSubsystem.claw.open();
+                    timer.reset();
                     break;
 
                 case COLLECTING2:
-                    extendo.goToMax();
-                    follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToCollect2, true);
-                    intakeSubsystem.goDown();
-                    intakeSubsystem.claw.open();
-                    if(extendo.isAtPosition()){
-                        intakeSubsystem.collect(true);
+                    extendo.goToMaxAuto();
+                    if(extendo.isAtPosition() && timer.milliseconds() > magicTime){
+                        intakeSubsystem.hopPeSpateCollect();
                         CS = STATES.WAITING;
                         NS = STATES.SAMPLE3;
                         timer.reset();
-                        TIME_TO_WAIT = timeToTransfer;
-                        dropping = true;
+                        TIME_TO_WAIT = timeToHop;
                     }
                     break;
 
                 case SAMPLE3:
-                    outtakeSubsystem.claw.open();
-                    follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToSample3);
+                    intakeSubsystem.rotation.goToAutoPos();
+                    follower.setMaxPower(mediumSpeed);
+                    follower.followPath(goToSample3, true);
+                    extendo.goToMaxAuto();
+                    intakeSubsystem.goDown();
                     CS = STATES.MOVING;
-                    NS = STATES.COLLECTING2;
+                    NS = STATES.COLLECTING3;
+                    timer.reset();
                     break;
 
                 case COLLECTING3:
-                    extendo.goToMax();
-                    follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToCollect3, true);
-                    intakeSubsystem.goDown();
                     intakeSubsystem.claw.open();
-                    if(extendo.isAtPosition()){
-                        intakeSubsystem.collect(true);
+                    if(extendo.isAtPosition() && timer.milliseconds() > magicTime){
+                        intakeSubsystem.hopPeSpateCollect();
                         CS = STATES.WAITING;
                         NS = STATES.WALL;
                         timer.reset();
-                        TIME_TO_WAIT = timeToTransfer;
-                        dropping = true;
-                        sample3 = true;
+                        TIME_TO_WAIT = timeToHop;
                     }
                     break;
 
                 case WALL:
+                    intakeSubsystem.goToWall();
+                    intakeSubsystem.claw.open();
                     follower.setMaxPower(maxSpeed);
                     follower.followPath(goToWall, true);
                     NS = STATES.COLLECTING_SPECIMEN;
                     CS = STATES.MOVING;
+                    SCORING_CS = SCORING_STATES.SPECIMEN1;
                     break;
 
                 case COLLECTING_SPECIMEN:
@@ -431,27 +434,27 @@ public class SpecimenAuto5 extends LinearOpMode {
                     break;
 
                 case SCORE:
-                    lift.goToHighChamber();
                     follower.setMaxPower(maxSpeed);
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1) {
-                        follower.followPath(goToScore1, true);
+                        follower.followPath(goToScore1);
                         CS = STATES.SPECIMEN;
                     }
                     else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
-                        follower.followPath(goToScore2, true);
+                        follower.followPath(goToScore2);
                         CS = STATES.SPECIMEN;
                     }
                     else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
-                        follower.followPath(goToScore3, true);
+                        follower.followPath(goToScore3);
                         CS = STATES.SPECIMEN;
                     }
                     else if(SCORING_CS == SCORING_STATES.SPECIMEN4){
-                        follower.followPath(goToScore4, true);
+                        follower.followPath(goToScore4);
                         CS = STATES.SPECIMEN;
                     }
                     break;
 
                 case BACK_TO_WALL:
+                    lift.goToGround();
                     intakeSubsystem.goToWall();
                     follower.setMaxPower(maxSpeed);
                     follower.followPath(backToWall, true);

@@ -27,7 +27,7 @@ public class TeleOp2 extends LinearOpMode {
     ElapsedTime timer;
     ElapsedTime matchTimer;
     RobotSystems robotSystems;
-    ChassisFollower chassisFollower;
+//    ChassisFollower chassisFollower;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,7 +41,7 @@ public class TeleOp2 extends LinearOpMode {
         matchTimer = new ElapsedTime();
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        chassisFollower = new ChassisFollower(hardwareMap);
+//        chassisFollower = new ChassisFollower(hardwareMap);
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);

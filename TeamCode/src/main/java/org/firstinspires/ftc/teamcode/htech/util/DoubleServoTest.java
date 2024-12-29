@@ -51,8 +51,8 @@ public class DoubleServoTest extends LinearOpMode {
             testedServoOne.setPosition(servoOnePosition);
             testedServoTwo.setPosition(servoTwoPosition);
 
-            telemetry.addData("[INFO]", "Servo [1] Position: " + servoOnePosition);
-            telemetry.addData("[INFO]", "Servo [2] Position: " + servoTwoPosition);
+            telemetry.addData("[INFO]", "Servo [1] Position: " + testedServoOne.getPosition());
+            telemetry.addData("[INFO]", "Servo [2] Position: " + testedServoTwo.getPosition());
             telemetry.update();
         }
     }

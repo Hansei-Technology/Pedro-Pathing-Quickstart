@@ -16,12 +16,13 @@ public abstract class PositionsIntake {
 //    public static double perpendicularRotation = 0.56;
 //    public static double flippedNormalRotation = 0.84;
 
-    public static double normalRotation = 0.315;
-    public static double perpendicularRotation = 0.6;
-    public static double flippedNormalRotation = 0.88;
+    public static double normalRotation = 0.22;
+    public static double perpendicularRotation = 0.5;
+    public static double flippedNormalRotation = 0.8;
 
     public static double rotation30Deg = 0.095;
-    public static double rotSpeed = 0.06  ;
+    public static double rotSpeed = 0.06;
+    public static double rotationAuto = 0.783;
 
     // INTAKE BAR //
     public static double groundPositionBar = 0.58; // over the samples

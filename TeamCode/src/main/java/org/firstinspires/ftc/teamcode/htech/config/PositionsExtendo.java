@@ -7,6 +7,7 @@ public class PositionsExtendo {
     public static int ground = 0;
     public static int transfer = 0;
     public static int max = 380;
+    public static int maxAuto = 345;
     public static int mid = 250;
 
     public static double kP = 0.01;

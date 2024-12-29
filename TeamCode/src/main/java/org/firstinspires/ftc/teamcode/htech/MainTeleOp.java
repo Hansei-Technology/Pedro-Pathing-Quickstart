@@ -67,6 +67,11 @@ public class MainTeleOp extends LinearOpMode {
                 lift.goToHighChamber();
                 outtakeSubsystem.goToSpecimenScore();
             }
+
+            if(stickyGamepad2.right_stick_button){
+                intakeSubsystem.hopPeSpateCollect();
+            }
+
             if(stickyGamepad2.b) {
                 intakeSubsystem.collect(false);
             }
