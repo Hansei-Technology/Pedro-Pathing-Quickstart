@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 @Config
-@Autonomous(name = "[AUTO] 5 Specimene", group = "HTECH")
-public class SpecimenAuto5 extends LinearOpMode {
+@Autonomous(name = "[AUTO] NU MERGE!!!!", group = "HTECH")
+public class NuMergeAuto extends LinearOpMode {
 
     ChassisMovement chassisMovement;
     IntakeSubsystem intakeSubsystem;

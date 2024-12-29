@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 @Config
-@Autonomous(name = "[AUTO] SpecimenBOB", group = "HTECH")
+@Autonomous(name = "[AUTO] 5", group = "HTECH")
 public class Specimen5 extends LinearOpMode {
     ChassisMovement chassisMovement;
     IntakeSubsystem intakeSubsystem;
@@ -36,14 +36,18 @@ public class Specimen5 extends LinearOpMode {
     private Follower follower;
     private Path safeScoring;
     private Path goToPreload;
+    private PathChain goToScore2;
+    private PathChain goToScore3;
     private PathChain goTo1Sample;
     private PathChain goTo2Sample;
     private PathChain goTo3Sample;
-    private PathChain goTo1Specimen;
-    private PathChain goTo2Specimen;
-    private PathChain goTo3Specimen;
+    private PathChain goToWall;
+    private PathChain goToScore1;
+    private PathChain goToWall2;
     private PathChain goToPark;
-    private PathChain goToSafe4;
+    private PathChain goToCheckpoint;
+    private PathChain goToCollectSamples;
+    private PathChain goToScore4;
 
     private enum STATES {
         MOVING,
@@ -57,71 +61,84 @@ public class Specimen5 extends LinearOpMode {
         SAFE1,
         SAFE2,
         SAFE3,
-        COLLECTING1,
-        COLLECTING2,
-        COLLECTING3,
-        SPECIMEN1,
-        SPECIMEN2,
-        SPECIMEN3,
         PARK,
         PARKED,
-        SAFE4,
-        SCORE1,
-        SCORE2,
-        SCORE3,
-        SAFE_SCORE
+        BACK_TO_WALL,
+        WALL,
+        COLLECTING,
+        SCORE,
+        CHECKPOINT,
+        WAIT_CLESTE,
+        WAIT_TRANSFER,
+        COLLECTING_SAMPLES
+
     }
     public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
 
+    public static double maxSpeed = 1;
+    public static double slowSpeed = 0.65;
+    public static double preloadSpeed = 0.8;
+    public static double mediumSpeed = 0.8;
+    //public VoltageSensor voltageSensor;
+    //public double voltage;
     boolean firstTime = true;
 
     public enum SCORING_STATES{
         SPECIMEN1,
         SPECIMEN2,
         SPECIMEN3,
+        SPECIMEN4,
         IDLE
     }
 
     public SCORING_STATES SCORING_CS = SCORING_STATES.IDLE;
 
-    public static int timeToPreload = 400;
+    public static int timeToPreload = 0;
     public static int timeToSample = 200;
-    public static int timeToCollect1 = 1000;
+    public static int timeToCollect = 100;
     public static int timeToCollect2 = 1000;
     public static int timeToCollect3 = 1000;
-    public static int time_to_transfer = 600;
+    public static int time_to_transfer = 1000;
     public static int time_to_lift = 650;
     public static int time_to_drop = 800;
+    public static int time_to_extend = 150;
+    public static int timeToScoreSpecimen = 220;
 
     //start pose 135, 83
 
-    public static double START_X = 135 -135, START_Y = 86 -86, START_ANGLE = 0;
-    public static double PRELOAD_X = 108.5 -135, PRELOAD_Y = 86 -86, PRELOAD_ANGLE = START_ANGLE;
+    public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
+    public static double PRELOAD_X = -28.5, PRELOAD_Y = 0, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE1_X = 135 -135, SAFE1_Y = 94.3 -86 -9, SAFE11_ANGLE;
-    public static double SAMPLE1_X = 87 -135, SAMPLE1_Y = 119 -86 -9, SAMPLE1_ANGLE = 0;
-    public static double HUMAN1_X = 120 -135, HUMAN1_Y = SAMPLE1_Y, HUMAN1_ANGLE = 0;
+    public static double SAFE1_X = -10, SAFE1_Y = 22;
+    public static double SAFE12_X = -40, SAFE12_Y = 16.5;
+    public static double SAMPLE1_X = -48, SAMPLE1_Y = 37, SAMPLE1_ANGLE = 0;
+    public static double HUMAN1_X = -15, HUMAN1_Y = SAMPLE1_Y, HUMAN1_ANGLE = 0;
 
-    public static double SAFE2_X = 87 -135, SAFE2_Y = 108 -86 -9, SAFE2_ANGLE;
-    public static double SAMPLE2_X = 87 -135, SAMPLE2_Y = 130 -86 -9, SAMPLE2_ANGLE = 0;
-    public static double HUMAN2_X = 120 -135, HUMAN2_Y = SAMPLE2_Y, HUMAN2_ANGLE = 0;
+    public static double SAFE2_X = -48, SAFE2_Y = 30;
+    public static double SAMPLE2_X = -48, SAMPLE2_Y = 45, SAMPLE2_ANGLE = 0;
+    public static double HUMAN2_X = -15, HUMAN2_Y = SAMPLE2_Y, HUMAN2_ANGLE = 0;
 
-    public static double SAFE3_X = 95 -135, SAFE3_Y = 128 -86 -9, SAFE3_ANGLE;
-    public static double SAMPLE3_X = 87 -135, SAMPLE3_Y = 140 -86 -9, SAMPLE3_ANGLE = 0;
-    public static double HUMAN3_X = 120 -135, HUMAN3_Y = SAMPLE3_Y, HUMAN3_ANGLE = 0;
-    public static double SAFE4_X = 115 -135, SAFE4_Y = 120 -86 -9, SAFE4_ANGLE = 0;
+    public static double SAFE3_X = -40, SAFE3_Y = 40;
+    public static double SAMPLE3_X = -48, SAMPLE3_Y = 52.3, SAMPLE3_ANGLE = 0;
+    public static double SPECIMEN1_X = -8, SPECIMEN1_Y = SAMPLE3_Y, SPECIMEN1_ANGLE = 0;
+    public static double CHECKPOINT_X = -20, CHECKPOINT_Y = 30, CHECKPOINT_ANGLE = 0;
 
-    public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = -10, SAFE_SPECIMEN_ANGLE;
+    public static double SCORE1_X = -28.5, SCORE1_Y = -5;
+    public static double SCORE2_X = -28.5, SCORE2_Y = -6.5;
+    public static double SCORE3_X = -28.5, SCORE3_Y = -8;
+    public static double SCORE4_X = -28.5, SCORE4_Y = -9;
 
-    public static double SPECIMEN1_X = 126 -135, SPECIMEN1_Y = 120 -86 -9, SPECIMEN1_ANGLE = 0;
-    public static double SPECIMEN2_X = -14 -135, SPECIMEN2_Y = -38.5 -86, SPECIMEN2_ANGLE = 123;
-    public static double SPECIMEN3_X = -14 -135, SPECIMEN3_Y = -38.5 -86, SPECIMEN3_ANGLE = 125;
-    public static double PARK_X = 120 -135, PARK_Y = 120 -86, PARK_ANGLE = 90;
-    public static double SAFE_PARK_X = -52, SAFE_PARK_Y = -38, SAFE_PARK_ANGLE;
+    public static double SPECIMEN_X = -8, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
+
+    public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = 5;
+    public static double SAFE_SPECIMEN2_X = -20, SAFE_SPECIMEN2_Y = SPECIMEN_Y;
+
+    public static double PARK_X = -10, PARK_Y = 30, PARK_ANGLE = 80;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassisMovement = new ChassisMovement(hardwareMap);
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
@@ -137,13 +154,13 @@ public class Specimen5 extends LinearOpMode {
         outtakeSubsystem.init();
         intakeSubsystem.initAuto();
         outtakeSubsystem.claw.close();
-
+        extendo.goToGround();
+        extendo.pidEnabled = true;
 
         goToPreload = new Path(new BezierLine(new Point(START_X,START_Y, Point.CARTESIAN), new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)));
         goToPreload.setConstantHeadingInterpolation(Math.toRadians(START_ANGLE));
-//        goToPreload.setReversed(true);
-        follower.setMaxPower(0.6);
-        safeScoring = new Path(new BezierLine(new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN), new Point(SAFE4_X, SAFE4_Y, Point.CARTESIAN)));
+        follower.setMaxPower(maxSpeed);
+        safeScoring = new Path(new BezierLine(new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN), new Point(CHECKPOINT_X, CHECKPOINT_Y, Point.CARTESIAN)));
         safeScoring.setConstantHeadingInterpolation(Math.toRadians(PRELOAD_ANGLE));
 
         goTo1Sample = follower.pathBuilder()
@@ -152,7 +169,7 @@ public class Specimen5 extends LinearOpMode {
                         new BezierCurve(
                                 new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN),
                                 new Point(SAFE1_X, SAFE1_Y, Point.CARTESIAN),
-                                //new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
+                                new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
                                 new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
                         )
                 )
@@ -164,7 +181,7 @@ public class Specimen5 extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(HUMAN1_ANGLE))
-                .setPathEndTimeoutConstraint(500)
+                //.setPathEndTimeoutConstraint(500)
                 .build();
 
         goTo2Sample = follower.pathBuilder()
@@ -184,7 +201,7 @@ public class Specimen5 extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(HUMAN2_ANGLE))
-                .setPathEndTimeoutConstraint(500)
+                //.setPathEndTimeoutConstraint(500)
                 .build();
 
         goTo3Sample = follower.pathBuilder()
@@ -200,56 +217,35 @@ public class Specimen5 extends LinearOpMode {
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
-                                new Point(HUMAN3_X, HUMAN3_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(HUMAN3_ANGLE))
-                .setPathEndTimeoutConstraint(500)
-                .build();
-
-        goToSafe4 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Point(HUMAN3_X, HUMAN3_Y, Point.CARTESIAN),
-                                new Point(SAFE4_X, SAFE4_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(SAFE4_ANGLE))
-                .setPathEndTimeoutConstraint(500)
-                .build();
-
-        goTo1Specimen = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Point(SAFE4_X, SAFE4_Y, Point.CARTESIAN),
                                 new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(Math.toRadians(PRELOAD_ANGLE)))
-                .setPathEndTimeoutConstraint(500)
+                .setConstantHeadingInterpolation(Math.toRadians(SPECIMEN1_ANGLE))
+                //.setPathEndTimeoutConstraint(500)
                 .build();
 
-        goTo2Specimen = follower.pathBuilder()
+        goToCheckpoint = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
-                                new Point(SPECIMEN2_X, SPECIMEN2_Y, Point.CARTESIAN)
+                                new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN),
+                                new Point(CHECKPOINT_X, CHECKPOINT_Y, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE), Math.toRadians(SPECIMEN2_ANGLE))
-                .setPathEndTimeoutConstraint(500)
+                .setConstantHeadingInterpolation(Math.toRadians(CHECKPOINT_ANGLE))
+                //.setPathEndTimeoutConstraint(500)
                 .build();
 
-        goTo3Specimen = follower.pathBuilder()
+        goToWall = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
-                                new Point(SPECIMEN3_X, SPECIMEN3_Y, Point.CARTESIAN)
+                                new Point(CHECKPOINT_X, CHECKPOINT_Y, Point.CARTESIAN),
+                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE), Math.toRadians(SPECIMEN3_ANGLE))
-                .setPathEndTimeoutConstraint(500)
+                .setConstantHeadingInterpolation(Math.toRadians(PRELOAD_ANGLE))
+                //.setPathEndTimeoutConstraint(500)
                 .build();
+
 
         goToPark = follower.pathBuilder()
                 .addPath(
@@ -258,156 +254,310 @@ public class Specimen5 extends LinearOpMode {
                                 new Point(PARK_X, PARK_Y, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SPECIMEN1_ANGLE), Math.toRadians(PARK_ANGLE))
-                .setPathEndTimeoutConstraint(500)
+                .setLinearHeadingInterpolation(Math.toRadians(SPECIMEN_ANGLE), Math.toRadians(PARK_ANGLE))
+                //.setPathEndTimeoutConstraint(500)
                 .build();
+
+        goToScore1 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN),
+                                new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SCORE1_X, SCORE1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                //.setPathEndTimeoutConstraint(500)
+                .build();
+
+        goToWall2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN),
+                                new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SAFE_SPECIMEN2_X, SAFE_SPECIMEN2_Y, Point.CARTESIAN),
+                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(SPECIMEN_ANGLE))
+                //.setPathEndTimeoutConstraint(500)
+                .build();
+
+        goToScore2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SCORE2_X, SCORE2_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                //.setPathEndTimeoutConstraint(500)
+                .build();
+
+        goToScore3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SCORE3_X, SCORE3_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                //.setPathEndTimeoutConstraint(500)
+                .build();
+
+        goToCollectSamples = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN),
+                                new Point(SAFE1_X, SAFE1_Y, Point.CARTESIAN),
+                                new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
+                                new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE))
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
+                                new Point(HUMAN1_X, HUMAN1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(HUMAN1_ANGLE))
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(HUMAN1_X,HUMAN1_Y, Point.CARTESIAN),
+                                new Point(SAFE2_X, SAFE2_Y, Point.CARTESIAN),
+                                new Point(SAMPLE2_X,SAMPLE2_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE))
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
+                                new Point(HUMAN2_X, HUMAN2_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(HUMAN2_ANGLE))
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(HUMAN2_X,HUMAN2_Y, Point.CARTESIAN),
+                                new Point(SAFE3_X, SAFE3_Y, Point.CARTESIAN),
+                                new Point(SAMPLE3_X,SAMPLE3_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE))
+                .addPath(
+                        new BezierLine(
+                                new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
+                                new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(SPECIMEN1_ANGLE))
+                //.setPathEndTimeoutConstraint(500)
+                .build();
+
+        goToScore4 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SCORE4_X, SCORE4_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                //.setPathEndTimeoutConstraint(500)
+                .build();
+
+
+
 
         follower.followPath(goToPreload);
 
         waitForStart();
 
         while (opModeIsActive()) {
+            //voltage = voltageSensor.getVoltage();
 
             switch(CS) {
                 case PRELOAD:
-                    lift.goToHighChamber();
-                    outtakeSubsystem.goToSpecimenScore();
-                    NS = STATES.PLACING_PRELOAD;
-                    CS = STATES.MOVING;
+                    if(robotSystems.transferState == RobotSystems.TransferStates.IDLE){
+                        lift.goToHighChamber();
+                        outtakeSubsystem.goToSpecimenScore();
+                        timer.reset();
+                        NS = STATES.PLACING_PRELOAD;
+                        CS = STATES.MOVING;
+                    }
                     break;
 
                 case MOVING:
-                    if(!follower.isBusy() ||  follower.getCurrentTValue() > 0.99 ) {
-                        firstTime = true;
+                    timer.reset();
+                    if(!follower.isBusy()) {
                         CS = NS;
                     }
                     break;
 
+
                 case WAITING:
                     if(timer.milliseconds() > TIME_TO_WAIT) {
-                            CS = NS;
-                    }
-                    break;
-
-                case TRANSFERING:
-                    if(robotSystems.transferState == RobotSystems.TransferStates.IDLE) {
-                        if(firstTime) {
-                            timer.reset();
-                            firstTime = false;
-                        }
-                        if(timer.milliseconds() > time_to_transfer) {
-//                            lift.goToHighChamber();
-                            firstTime = true;
-                            CS = STATES.MOVING;
-                        }
+                        CS = NS;
                     }
                     break;
 
                 case PLACING_PRELOAD:
-                    if(firstTime) {
-                        lift.goToMagicPos();
-                        firstTime = false;
-                    }
-
-                    if(lift.isAtPosition()) {
+                    lift.goToMagicPos();
+                    if(timer.milliseconds() > timeToScoreSpecimen){
                         outtakeSubsystem.claw.open();
-                        NS = STATES.SAMPLE1;
-                        firstTime = true;
-                        CS = STATES.WAITING;
-                        TIME_TO_WAIT = timeToPreload;
-                        timer.reset();
-                    }
-
-                    if(SCORING_CS == SCORING_STATES.SPECIMEN1 && NS == STATES.SAMPLE1){
-                        NS = STATES.SAFE_SCORE;
-                        break;
-                    }
-                    if(SCORING_CS == SCORING_STATES.SPECIMEN2 && NS == STATES.SAMPLE1){
-                        NS = STATES.SAFE_SCORE;
-                        break;
-                    }
-                    if(SCORING_CS == SCORING_STATES.SPECIMEN3 && NS == STATES.SAMPLE1){
-                        NS = STATES.PARK;
-                        break;
+                        if(SCORING_CS == SCORING_STATES.IDLE){
+                            CS = STATES.COLLECTING_SAMPLES;
+                        }
+                        if(SCORING_CS == SCORING_STATES.SPECIMEN1){
+                            CS = STATES.BACK_TO_WALL;
+                        }
+                        if(SCORING_CS == SCORING_STATES.SPECIMEN2){
+                            CS = STATES.BACK_TO_WALL;
+                        }
+                        if(SCORING_CS == SCORING_STATES.SPECIMEN3){
+                            CS = STATES.BACK_TO_WALL;
+                        }
+                        if(SCORING_CS == SCORING_STATES.SPECIMEN4){
+                            CS = STATES.PARK;
+                        }
                     }
                     break;
-                case SAMPLE1:
-                    follower.setMaxPower(0.85);
-                    follower.followPath(goTo1Sample);
-                    outtakeSubsystem.goToTransfer();
+
+                case COLLECTING_SAMPLES:
                     lift.goToGround();
+                    extendo.goToGround();
                     intakeSubsystem.goToWall();
                     intakeSubsystem.claw.open();
+                    follower.setMaxPower(maxSpeed);
+                    follower.followPath(goToCollectSamples);
+                    lift.goToGround();
+                    CS = STATES.MOVING;
+                    NS = STATES.COLLECTING;
+                    SCORING_CS = SCORING_STATES.SPECIMEN1;
+                    break;
 
-                    timer.reset();
-                    NS = STATES.SAMPLE2;
-                    firstTime = true;
-                    CS = STATES.MOVING;
-                    break;
-                case SAMPLE2:
-                    follower.setMaxPower(0.85);
-                    follower.followPath(goTo2Sample);
+//                case SAMPLE1: //aduce sample 1 la human
+//                    follower.setMaxPower(maxSpeed);
+//                    follower.followPath(goTo1Sample);
+//                    outtakeSubsystem.goToTransfer();
+//                    lift.goToGround();
+//                    intakeSubsystem.goToWall();
+//                    intakeSubsystem.claw.open();
+//
+//                    timer.reset();
+//                    NS = STATES.SAMPLE2;
+//                    firstTime = true;
+//                    CS = STATES.MOVING;
+//                    break;
+//                case SAMPLE2: //aduce sample 2 la human
+//                    follower.setMaxPower(maxSpeed);
+//                    follower.followPath(goTo2Sample);
+//
+//                    NS = STATES.SAMPLE3;
+//                    firstTime = true;
+//                    CS = STATES.MOVING;
+//                    break;
+//                case SAMPLE3: //aduce sample 3 la human
+//                    follower.setMaxPower(maxSpeed);
+//                    follower.followPath(goTo3Sample);
+//
+//                    NS = STATES.CHECKPOINT;
+//                    firstTime = true;
+//                    CS = STATES.MOVING;
+//                    break;
+//                case CHECKPOINT: //fostul SAFE4; merge la checkpoint(punctul inainte de perete)
+//                    follower.setMaxPower(maxSpeed);
+//                    follower.followPath(goToCheckpoint);
+//                    outtakeSubsystem.goToTransfer();
+//                    intakeSubsystem.goToWall();
+//                    NS = STATES.WALL;
+//                    firstTime = true;
+//                    CS = STATES.MOVING;
+//                    break;
+//                case WALL: //fostul COLLECTING1; merge la perete pentru a lua specimenul
+//                    follower.setMaxPower(maxSpeed);
+//                    follower.followPath(goToWall, true);
+//                    NS = STATES.COLLECTING;
+//                    CS = STATES.MOVING;
+//                    break;
 
-                    NS = STATES.SAMPLE3;
-                    firstTime = true;
-                    CS = STATES.MOVING;
-                    break;
-                case SAMPLE3:
-                    follower.setMaxPower(0.85);
-                    follower.followPath(goTo3Sample);
-
-                    NS = STATES.SAFE4;
-                    firstTime = true;
-                    CS = STATES.MOVING;
-                    break;
-                case SAFE4:
-                    follower.setMaxPower(0.6);
-                    follower.followPath(goToSafe4, true);
-                    NS = STATES.COLLECTING1;
-                    firstTime = true;
-                    CS = STATES.MOVING;
-                    break;
-                case COLLECTING1:
-                    follower.setMaxPower(0.5);
-                    follower.followPath(goTo1Specimen);
-                    if(SCORING_CS == SCORING_STATES.IDLE){
-                        SCORING_CS = SCORING_STATES.SPECIMEN1;
-                    }
-                    NS = STATES.COLLECTING2;
-                    CS = STATES.MOVING;
-                    break;
-                case COLLECTING2:
+                case COLLECTING: //fostul COLLECTING2; prinde specimenul
                     intakeSubsystem.claw.close();
-                    robotSystems.transferState = RobotSystems.TransferStates.LIFT_GOING_DOWN;
-                    CS = STATES.TRANSFERING;
-                    NS = STATES.SCORE1;
+                    TIME_TO_WAIT = timeToCollect;
+                    timer.reset();
+                    CS = STATES.WAITING;
+                    NS = STATES.TRANSFERING;
                     break;
-                case SCORE1:
-                    follower.setMaxPower(0.6);
-                    follower.followPath(goToPreload);
-                    CS = STATES.PRELOAD;
+                case TRANSFERING:
+                    robotSystems.startTransfer();
+                    TIME_TO_WAIT = time_to_transfer;
+                    timer.reset();
+                    CS = STATES.WAITING;
+                    NS = STATES.SCORE;
                     break;
-                case SAFE_SCORE:
+
+                case SCORE:
+                    lift.goToHighChamber();
+                    follower.setMaxPower(maxSpeed);
+                    if(SCORING_CS == SCORING_STATES.SPECIMEN1) {  //goToScore este diferit ca sa nu puna specimenul unul peste altul
+                        follower.followPath(goToScore1);
+                        CS = STATES.PRELOAD;
+                    }
+                    else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
+                        follower.followPath(goToScore2);
+                        CS = STATES.PRELOAD;
+                    }
+                    else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
+                        follower.followPath(goToScore3);
+                        CS = STATES.PRELOAD;
+                    }
+                    else if(SCORING_CS == SCORING_STATES.SPECIMEN4){
+                        follower.followPath(goToScore4);
+                        CS = STATES.PRELOAD;
+                    }
+                    break;
+                case BACK_TO_WALL://vine de la submersible la urmatorul specimen de pe perete, apoi repeta pasii pentru colectarea si punctarea specimenului
+                    lift.goToGround();
                     intakeSubsystem.goToWall();
-                    robotSystems.transferState = RobotSystems.TransferStates.INTAKE_WALL;
-                    follower.setMaxPower(0.75);
-                    follower.followPath(safeScoring, true);
-                    CS = STATES.COLLECTING1;
+                    follower.setMaxPower(maxSpeed);
+                    follower.followPath(goToWall2, true);
+                    CS = STATES.MOVING;
+                    NS = STATES.COLLECTING;
                     if(SCORING_CS == SCORING_STATES.SPECIMEN1){
                         SCORING_CS = SCORING_STATES.SPECIMEN2;
-                    }else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
+                    }
+                    else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
                         SCORING_CS = SCORING_STATES.SPECIMEN3;
                     }
+                    else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
+                        SCORING_CS = SCORING_STATES.SPECIMEN4;
+                    }
                     break;
+
                 case PARK:
-                    follower.setMaxPower(0.8);
-                    follower.followPath(goToPark);
+                    follower.setMaxPower(maxSpeed);
                     lift.goToGround();
+                    extendo.goToGround();
+                    follower.followPath(goToPark);
+                    CS = STATES.MOVING;
+                    NS = STATES.PARKED;
+                    break;
+                case PARKED:
+                    //end
+                    break;
             }
 
 
             telemetry.addData("Current State", CS);
             telemetry.addData("Next State", NS);
+            telemetry.addData("TransferState", robotSystems.transferState);
+            telemetry.addData("TransferTimer", robotSystems.timer.milliseconds());
             telemetry.update();
 
             robotSystems.update();
