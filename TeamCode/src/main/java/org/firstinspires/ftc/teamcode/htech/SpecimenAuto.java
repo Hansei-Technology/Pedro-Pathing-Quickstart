@@ -18,13 +18,16 @@ import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 @Config
 @Autonomous(name = "[AUTO] Specimen", group = "HTECH")
@@ -152,6 +155,7 @@ public class SpecimenAuto extends LinearOpMode {
         matchTimer = new ElapsedTime();
 
         follower = new Follower(hardwareMap);
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower.setStartingPose(new Pose(START_X, START_Y, START_ANGLE));
         outtakeSubsystem.init();
         intakeSubsystem.initAuto();

@@ -14,13 +14,16 @@ import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 /**
  * This is the StraightBackAndForth autonomous OpMode. It runs the robot in a specified distance
@@ -133,6 +136,7 @@ public class BasketAuto extends OpMode {
         outtakeSubsystem.claw.close();
 
         follower = new Follower(hardwareMap);
+        Constants.setConstants(FConstants.class, LConstants.class);
         //follower.setPose(new Pose(START_X, START_Y, START_ANGLE));
 
         goToPreload = new Path(new BezierLine(new Point(START_X,START_Y, Point.CARTESIAN), new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)));
