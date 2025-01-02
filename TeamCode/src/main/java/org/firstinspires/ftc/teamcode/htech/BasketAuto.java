@@ -55,7 +55,7 @@ public class BasketAuto extends OpMode {
 
     private Follower follower;
 
-    private Path goToPreload;
+    Path goToPreload;
 
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -26, PRELOAD_Y = 0, PRELOAD_ANGLE;
@@ -109,7 +109,7 @@ public class BasketAuto extends OpMode {
         PARK,
         PARKED
     }
-    public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
+    STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
 
     Pose Sample1 = new Pose(SAMPLE1_X, SAMPLE1_Y, SAMPLE1_ANGLE);
@@ -135,8 +135,8 @@ public class BasketAuto extends OpMode {
 
         outtakeSubsystem.claw.close();
 
-        follower = new Follower(hardwareMap);
         Constants.setConstants(FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         //follower.setPose(new Pose(START_X, START_Y, START_ANGLE));
 
         goToPreload = new Path(new BezierLine(new Point(START_X,START_Y, Point.CARTESIAN), new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)));

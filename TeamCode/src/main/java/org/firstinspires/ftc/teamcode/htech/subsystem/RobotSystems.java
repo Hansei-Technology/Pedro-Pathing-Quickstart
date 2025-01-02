@@ -206,6 +206,7 @@ public class RobotSystems {
 
                     transferState = TransferStates.IDLE;
                 }
+                break;
         }
     }
 

@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.htech.config;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.teamcode.htech.SpecimenAuto;
 
 /**
  * Class used for storing the various subsystem dependent values, like speed.
