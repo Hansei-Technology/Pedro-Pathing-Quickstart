@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.htech;
+package htech;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -15,19 +15,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
+import htech.subsystem.ChassisMovement;
+import htech.subsystem.ExtendoSystem;
+import htech.subsystem.IntakeSubsystem;
+import htech.subsystem.LiftSystem;
+import htech.subsystem.OuttakeSubsystem;
+import htech.subsystem.RobotSystems;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
 @Config
-@Autonomous(name = "4+0", group = "HTECH")
-public class FourSpecimensAuto extends LinearOpMode {
+@Autonomous(name = "[AUTO] 5+0", group = "HTECH")
+public class FiveSpecimensAuto extends LinearOpMode {
 
 
     //Mechanisms
@@ -48,6 +48,7 @@ public class FourSpecimensAuto extends LinearOpMode {
     PathChain goToScore1;
     PathChain goToScore2;
     PathChain goToScore3;
+    PathChain goToScore4;
     PathChain goToPark;
 
 
@@ -63,7 +64,7 @@ public class FourSpecimensAuto extends LinearOpMode {
 
     private enum SCORING_STATES{
         IDLE,
-        SPECIMEN1, SPECIMEN2, SPECIMEN3
+        SPECIMEN1, SPECIMEN2, SPECIMEN3, SPECIMEN4
     }
 
     STATES CS = STATES.IDLE, NS = STATES.IDLE;
@@ -102,6 +103,7 @@ public class FourSpecimensAuto extends LinearOpMode {
     public static double SCORE1_X = -28.5, SCORE1_Y = 1;
     public static double SCORE2_X = -28.5, SCORE2_Y = -1;
     public static double SCORE3_X = -28.5, SCORE3_Y = -1.5;
+    public static double SCORE4_X = -28.5, SCORE4_Y = -2;
 
     public static double SPECIMEN_X = -8.2, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
 
@@ -109,6 +111,7 @@ public class FourSpecimensAuto extends LinearOpMode {
     public static double SAFE_SPECIMEN2_X = -20, SAFE_SPECIMEN2_Y = SPECIMEN_Y;
 
     public static double PARK_X = -10, PARK_Y = 30, PARK_ANGLE = 80;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -221,6 +224,16 @@ public class FourSpecimensAuto extends LinearOpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
+        goToScore4 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                                new Point(SCORE4_X, SCORE4_Y, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .build();
+
         goToWall = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -286,6 +299,9 @@ public class FourSpecimensAuto extends LinearOpMode {
                             CS = STATES.WALL;
                         }
                         if(SCORING_CS == SCORING_STATES.SPECIMEN3){
+                            CS = STATES.WALL;
+                        }
+                        if(SCORING_CS == SCORING_STATES.SPECIMEN4){
                             CS = STATES.PARK;
                         }
                     }
@@ -351,6 +367,9 @@ public class FourSpecimensAuto extends LinearOpMode {
                     else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
                         SCORING_CS = SCORING_STATES.SPECIMEN3;
                     }
+                    else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
+                        SCORING_CS = SCORING_STATES.SPECIMEN4;
+                    }
                     break;
 
                 case PARK:
@@ -381,4 +400,6 @@ public class FourSpecimensAuto extends LinearOpMode {
             telemetry.update();
         }
     }
+
+
 }

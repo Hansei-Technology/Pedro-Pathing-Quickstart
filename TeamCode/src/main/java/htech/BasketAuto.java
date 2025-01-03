@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.htech;
+package htech;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -8,19 +8,22 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import htech.subsystem.ChassisMovement;
+import htech.subsystem.ExtendoSystem;
+import htech.subsystem.IntakeSubsystem;
+import htech.subsystem.LiftSystem;
+import htech.subsystem.OuttakeSubsystem;
+import htech.subsystem.RobotSystems;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 /**
  * This is the StraightBackAndForth autonomous OpMode. It runs the robot in a specified distance
@@ -52,7 +55,7 @@ public class BasketAuto extends OpMode {
 
     private Follower follower;
 
-    private Path goToPreload;
+    Path goToPreload;
 
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -26, PRELOAD_Y = 0, PRELOAD_ANGLE;
@@ -106,7 +109,7 @@ public class BasketAuto extends OpMode {
         PARK,
         PARKED
     }
-    public STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
+    STATES CS = STATES.PRELOAD, NS = STATES.MOVING;
     public int TIME_TO_WAIT = 0;
 
     Pose Sample1 = new Pose(SAMPLE1_X, SAMPLE1_Y, SAMPLE1_ANGLE);
@@ -132,6 +135,7 @@ public class BasketAuto extends OpMode {
 
         outtakeSubsystem.claw.close();
 
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         //follower.setPose(new Pose(START_X, START_Y, START_ANGLE));
 

@@ -1,29 +1,33 @@
-package org.firstinspires.ftc.teamcode.htech;
+package htech;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import htech.subsystem.ChassisMovement;
+import htech.subsystem.ExtendoSystem;
+import htech.subsystem.IntakeSubsystem;
+import htech.subsystem.LiftSystem;
+import htech.subsystem.OuttakeSubsystem;
+import htech.subsystem.RobotSystems;
+
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 @Config
-@Autonomous(name = "[AUTO] 5+0", group = "HTECH")
-public class FiveSpecimensAuto extends LinearOpMode {
+@Autonomous(name = "4+0", group = "HTECH")
+public class FourSpecimensAuto extends LinearOpMode {
 
 
     //Mechanisms
@@ -34,7 +38,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
     ExtendoSystem extendo;
     RobotSystems robotSystems;
     ElapsedTime timer;
-    ElapsedTime matchTimer;
 
 
     //Pedro
@@ -45,7 +48,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
     PathChain goToScore1;
     PathChain goToScore2;
     PathChain goToScore3;
-    PathChain goToScore4;
     PathChain goToPark;
 
 
@@ -61,7 +63,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
     private enum SCORING_STATES{
         IDLE,
-        SPECIMEN1, SPECIMEN2, SPECIMEN3, SPECIMEN4
+        SPECIMEN1, SPECIMEN2, SPECIMEN3
     }
 
     STATES CS = STATES.IDLE, NS = STATES.IDLE;
@@ -84,9 +86,8 @@ public class FiveSpecimensAuto extends LinearOpMode {
     public static double START_X = 0, START_Y = 0, START_ANGLE = 0;
     public static double PRELOAD_X = -28.5, PRELOAD_Y = 0, PRELOAD_ANGLE = START_ANGLE;
 
-    public static double SAFE1_X = -5, SAFE1_Y = 30;
-    public static double SAFE12_X = -30, SAFE12_Y = 10;
-    public static double SAFE13_X = -60, SAFE13_Y = 37;
+    public static double SAFE1_X = -5, SAFE1_Y = 27.5;
+    public static double SAFE12_X = -40, SAFE12_Y = 13;
     public static double SAMPLE1_X = -48, SAMPLE1_Y = 37, SAMPLE1_ANGLE = 0;
     public static double HUMAN1_X = -20, HUMAN1_Y = SAMPLE1_Y, HUMAN1_ANGLE = 0;
 
@@ -96,21 +97,18 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
     public static double SAFE3_X = -40, SAFE3_Y = 40;
     public static double SAMPLE3_X = -48, SAMPLE3_Y = 52.3, SAMPLE3_ANGLE = 0;
-    public static double SPECIMEN1_X = -8.2, SPECIMEN1_Y = SAMPLE3_Y, SPECIMEN1_ANGLE = 0;
+    public static double SPECIMEN1_X = -8, SPECIMEN1_Y = SAMPLE3_Y, SPECIMEN1_ANGLE = 0;
 
     public static double SCORE1_X = -28.5, SCORE1_Y = 1;
     public static double SCORE2_X = -28.5, SCORE2_Y = -1;
-    public static double SCORE3_X = -28.5, SCORE3_Y = -2;
-    public static double SCORE4_X = -29, SCORE4_Y = -3;
-    public static double SAFE_SCORE_X = -14, SAFE_SCORE_Y = 0;
+    public static double SCORE3_X = -28.5, SCORE3_Y = -1.5;
 
-    public static double SPECIMEN_X = -8.3, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
+    public static double SPECIMEN_X = -8.2, SPECIMEN_Y = 30, SPECIMEN_ANGLE = 0;
 
     public static double SAFE_SPECIMEN_X = -20, SAFE_SPECIMEN_Y = 5;
     public static double SAFE_SPECIMEN2_X = -20, SAFE_SPECIMEN2_Y = SPECIMEN_Y;
 
     public static double PARK_X = -10, PARK_Y = 30, PARK_ANGLE = 80;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -124,7 +122,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
         extendo = new ExtendoSystem(hardwareMap);
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         timer = new ElapsedTime();
-        matchTimer = new ElapsedTime();
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         follower.setStartingPose(new Pose(START_X, START_Y, START_ANGLE));
 
@@ -150,7 +148,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
                                 new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN),
                                 new Point(SAFE1_X, SAFE1_Y, Point.CARTESIAN),
                                 new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
-                                new Point(SAFE13_X, SAFE13_Y, Point.CARTESIAN),
                                 new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
                         )
                 )
@@ -196,9 +193,8 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
         goToScore1 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
                                 new Point(SCORE1_X, SCORE1_Y, Point.CARTESIAN)
                         )
                 )
@@ -207,9 +203,8 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
         goToScore2 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
                                 new Point(SCORE2_X, SCORE2_Y, Point.CARTESIAN)
                         )
                 )
@@ -218,21 +213,9 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
         goToScore3 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
                                 new Point(SCORE3_X, SCORE3_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
-
-        goToScore4 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
-                                new Point(SCORE4_X, SCORE4_Y, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -268,27 +251,17 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
         waitForStart();
 
-        //Match timer
-        matchTimer.reset();
-
-        while(opModeIsActive() && matchTimer.seconds() < 30.5){
+        while(opModeIsActive()){
 
             switch(CS){
 
                 case SPECIMEN:
                     if(robotSystems.transferState == RobotSystems.TransferStates.IDLE){
-                        follower.setMaxPower(maxSpeed);
                         lift.goToHighChamber();
                         outtakeSubsystem.goToSpecimenScore();
                         timer.reset();
                         NS = STATES.PLACING_SPECIMEN;
                         CS = STATES.MOVING;
-                    }
-                    break;
-
-                case WAITING:
-                    if(timer.milliseconds() > TIME_TO_WAIT){
-                        CS = NS;
                     }
                     break;
 
@@ -313,9 +286,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
                             CS = STATES.WALL;
                         }
                         if(SCORING_CS == SCORING_STATES.SPECIMEN3){
-                            CS = STATES.WALL;
-                        }
-                        if(SCORING_CS == SCORING_STATES.SPECIMEN4){
                             CS = STATES.PARK;
                         }
                     }
@@ -366,11 +336,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
                         follower.setMaxPower(scoreSpeed);
                         CS = STATES.SPECIMEN;
                     }
-                    else if(SCORING_CS == SCORING_STATES.SPECIMEN4) {
-                        follower.followPath(goToScore4);
-                        follower.setMaxPower(scoreSpeed);
-                        CS = STATES.SPECIMEN;
-                    }
                     break;
 
                 case WALL:
@@ -385,9 +350,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     }
                     else if(SCORING_CS == SCORING_STATES.SPECIMEN2){
                         SCORING_CS = SCORING_STATES.SPECIMEN3;
-                    }
-                    else if(SCORING_CS == SCORING_STATES.SPECIMEN3){
-                        SCORING_CS = SCORING_STATES.SPECIMEN4;
                     }
                     break;
 
@@ -411,7 +373,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
             telemetry.addData("State", CS);
             telemetry.addData("Next State", NS);
             telemetry.addData("Scoring State", SCORING_CS);
-            telemetry.addData("Match timer", matchTimer.seconds());
 
 
             //Updates
@@ -420,6 +381,4 @@ public class FiveSpecimensAuto extends LinearOpMode {
             telemetry.update();
         }
     }
-
-
 }

@@ -4,9 +4,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
+import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisFollower;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
 import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
@@ -25,6 +27,7 @@ public class MainTeleOp extends LinearOpMode {
     ElapsedTime timer;
     ElapsedTime matchTimer;
     RobotSystems robotSystems;
+    ChassisFollower chassisFollower;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,6 +41,7 @@ public class MainTeleOp extends LinearOpMode {
         matchTimer = new ElapsedTime();
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        chassisFollower = new ChassisFollower(hardwareMap);
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);
@@ -56,7 +60,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
 
             chassisMovement.move(gamepad1);
-
+//            chassisFollower.move(gamepad1);
 
             //intake
             if (stickyGamepad2.a) {

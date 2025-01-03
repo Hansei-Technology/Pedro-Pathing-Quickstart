@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.htech.subsystem;
+package htech.subsystem;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.htech.config.RobotSettings;
+import htech.config.RobotSettings;
 
 public class RobotSystems {
     public ExtendoSystem extendoSystem;
@@ -203,6 +203,7 @@ public class RobotSystems {
             case TRANSFER_READY:
                 if (timer.milliseconds() > RobotSettings.timeToCloseOuttake) {
                     timer.reset();
+
                     transferState = TransferStates.IDLE;
                 }
                 break;

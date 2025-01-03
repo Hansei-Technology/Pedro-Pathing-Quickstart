@@ -1,20 +1,17 @@
-package org.firstinspires.ftc.teamcode.htech;
+package htech;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisFollower;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
+import htech.subsystem.ChassisMovement;
+import htech.subsystem.ExtendoSystem;
+import htech.subsystem.IntakeSubsystem;
+import htech.subsystem.LiftSystem;
+import htech.subsystem.OuttakeSubsystem;
+import htech.subsystem.RobotSystems;
 
 @TeleOp(name = "[TELEOP] 2", group = "HTech")
 public class TeleOp2 extends LinearOpMode {

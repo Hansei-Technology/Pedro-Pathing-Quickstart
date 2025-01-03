@@ -1,23 +1,20 @@
-package org.firstinspires.ftc.teamcode.htech;
+package htech;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.htech.classes.StickyGamepad;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisFollower;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ChassisMovement;
-import org.firstinspires.ftc.teamcode.htech.subsystem.ExtendoSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.LiftSystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.OuttakeSubsystem;
-import org.firstinspires.ftc.teamcode.htech.subsystem.RobotSystems;
+import htech.subsystem.ChassisMovement;
+import htech.subsystem.ExtendoSystem;
+import htech.subsystem.IntakeSubsystem;
+import htech.subsystem.LiftSystem;
+import htech.subsystem.OuttakeSubsystem;
+import htech.subsystem.RobotSystems;
 
-@TeleOp(name = "[TELEOP] 2", group = "HTech")
-public class TeleOp2 extends LinearOpMode {
+@TeleOp(name = "[TELEOP] Main", group = "HTech")
+public class MainTeleOp extends LinearOpMode {
     ChassisMovement chassisMovement;
     IntakeSubsystem intakeSubsystem;
     OuttakeSubsystem outtakeSubsystem;
@@ -27,7 +24,6 @@ public class TeleOp2 extends LinearOpMode {
     ElapsedTime timer;
     ElapsedTime matchTimer;
     RobotSystems robotSystems;
-//    ChassisFollower chassisFollower;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,7 +37,6 @@ public class TeleOp2 extends LinearOpMode {
         matchTimer = new ElapsedTime();
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-//        chassisFollower = new ChassisFollower(hardwareMap);
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);
@@ -52,35 +47,77 @@ public class TeleOp2 extends LinearOpMode {
         intakeSubsystem.init();
         outtakeSubsystem.init();
 
+
         matchTimer.reset();
 
+        //lift.goToMinusPark();
+        //lift.reset();
         while (opModeIsActive()) {
 
-            chassisMovement.updateMovement(gamepad1);
-//            chassisFollower.move(gamepad1);
-
-            //extendo
-            extendo.moveFree(gamepad1.right_trigger - gamepad1.left_trigger);
-//            if(gamepad2.dpad_up) {
-//                extendo.goToPos(230);
-//                intakeSubsystem.goDown();
-//            }
+            chassisMovement.move(gamepad1);
 
 
             //intake
-            if(stickyGamepad1.right_bumper) {
-                intakeSubsystem.collect(false);
+            if (stickyGamepad2.a) {
+                lift.goToHighChamber();
+                outtakeSubsystem.goToSpecimenScore();
             }
 
-            if(stickyGamepad1.x || stickyGamepad2.x){
+            if(stickyGamepad2.right_stick_button){
+                intakeSubsystem.hopPeSpateCollect();
+            }
+
+            if(stickyGamepad2.b) {
+                intakeSubsystem.collect(false);
+            }
+            if(stickyGamepad2.dpad_right) {
+                intakeSubsystem.collectFast();
+            }
+            if (gamepad2.y) {
+                intakeSubsystem.goToWall();
+            }
+            //transfer
+            if(gamepad2.x) {
                 robotSystems.startTransfer();
             }
 
-            if (stickyGamepad1.left_bumper) intakeSubsystem.claw.toggle();
+            if (stickyGamepad2.right_bumper) intakeSubsystem.claw.toggle();
+            if (stickyGamepad2.left_bumper) intakeSubsystem.rotation.togglePerpendicular();
 
-            //rotations(both of them)
-            if(robotSystems.transferState == RobotSystems.TransferStates.IDLE){
-                intakeSubsystem.rotation.handleRotation(gamepad2.right_trigger - gamepad2.left_trigger);
+
+            if(gamepad2.dpad_down)  {
+                extendo.goToGround();
+                intakeSubsystem.goToWall();
+            }
+            if(gamepad2.dpad_up) {
+                extendo.goToPos(230);
+                intakeSubsystem.goDown();
+            }
+
+            extendo.moveFree(gamepad2.right_trigger - gamepad2.left_trigger);
+
+
+            //lift control
+//            if(gamepad1.b) {
+//                lift.goToHighChamber();
+//                outtakeSubsystem.goToSpecimenScore();
+//            }
+            if(gamepad1.y) {
+                lift.goToHighBasket();
+                outtakeSubsystem.goToSampleScore();
+            }
+            if(gamepad1.a) {
+                lift.goToGround();
+                outtakeSubsystem.goToTransfer();
+                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.TRANSFER) intakeSubsystem.goToReady();
+            }
+
+            if(gamepad1.right_bumper) outtakeSubsystem.claw.open();
+            if(gamepad1.left_bumper) robotSystems.scoreSpecimen();
+
+
+            if(matchTimer.seconds() > 90) { //only in endgame
+                //hang.setPower(-gamepad2.right_stick_y);
             }
 
             if(stickyGamepad2.dpad_left) {
@@ -90,41 +127,13 @@ public class TeleOp2 extends LinearOpMode {
                 robotSystems.outtakeSubsystem.joint.rotateLeft();
             }
 
-            if(gamepad2.dpad_down)  {
-                extendo.goToGround();
-                intakeSubsystem.goToWall();
-            }
-            if(gamepad2.dpad_up) {
-                extendo.goToMax();
-//                intakeSubsystem.goDown();
-            }
-
-            //lift
-            if(gamepad2.b) {
-                lift.goToHighChamber();
-                outtakeSubsystem.goToSpecimenScore();
-            }
-            if(gamepad2.y) {
-                lift.goToHighBasket();
-                outtakeSubsystem.goToSampleScore();
-            }
-            if(gamepad2.a) {
-                lift.goToGround();
-                outtakeSubsystem.goToTransfer();
-                if(intakeSubsystem.intakeState == IntakeSubsystem.IntakeState.TRANSFER) intakeSubsystem.goToReady();
-            }
-
-            if(gamepad2.right_bumper) outtakeSubsystem.claw.open();
-            if(gamepad2.left_bumper) robotSystems.scoreSpecimen();
-
 
             stickyGamepad2.update();
             stickyGamepad1.update();
             robotSystems.update();
 
-            //reset lift
-            if(gamepad1.dpad_down) {
-                while (gamepad1.dpad_down) {
+            if(gamepad1.left_stick_button) {
+                while (gamepad1.left_stick_button) {
                     lift.setPower(-0.35);
                 }
                 lift.setPower(0);
@@ -141,7 +150,6 @@ public class TeleOp2 extends LinearOpMode {
             telemetry.addData("intakeTimer", robotSystems.timerCollect.milliseconds());
             telemetry.addData("extendoPID", extendo.pidEnabled);
             telemetry.addData("outtakeRot", robotSystems.outtakeSubsystem.joint.getRot());
-            telemetry.addData("intakeRot", intakeSubsystem.rotation.rotLevel);
 
             telemetry.update();
         }

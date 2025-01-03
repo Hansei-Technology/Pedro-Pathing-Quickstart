@@ -1,11 +1,6 @@
-package org.firstinspires.ftc.teamcode.htech.config;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+package htech.config;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.teamcode.htech.SpecimenAuto;
 
 /**
  * Class used for storing the various subsystem dependent values, like speed.
@@ -22,9 +17,9 @@ public abstract class RobotSettings {
     //timers are in milliseconds
     public static int timeToCloseClaw = 150;
     public static int timeDown_Transfer = 650;
-    public static int timeWall_Transfer = 450; //550
+    public static int timeWall_Transfer = 550;
     public static int timeReady_Transfer = 350;
-    public static int timeToCatch = 180;
+    public static int timeToCatch = 180;  //150
     public static int timeWaitingToCatch = 300;
     public static int timeToCloseOuttake = 150;
     public static int timeFailedToCloseLift = 1000;
