@@ -3,6 +3,7 @@ package htech;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,9 @@ import htech.subsystem.ExtendoSystem;
 import htech.subsystem.LiftSystem;
 import htech.subsystem.OuttakeSubsystem;
 import htech.subsystem.RobotSystems;
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -152,6 +156,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         follower.setStartingPose(new Pose(START_X, START_Y, START_ANGLE));
 
