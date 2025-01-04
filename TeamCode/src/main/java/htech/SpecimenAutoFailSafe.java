@@ -574,11 +574,14 @@ public class SpecimenAutoFailSafe extends LinearOpMode {
                             if(controlPoint){
                                 if(twoControlPoints){
                                     follower.followPath(failSafe2controlPoints);
+                                    twoControlPoints = false;
                                 }else {
                                     follower.followPath(failSafe1controlPoint);
+                                    controlPoint = false;
                                 }
                             }else if(collectingSamplesFail) {
                                 follower.followPath(failSafeCollectingSamples);
+                                collectingSamplesFail = false;
                             }else{
                                 follower.followPath(failSafe);
                             }

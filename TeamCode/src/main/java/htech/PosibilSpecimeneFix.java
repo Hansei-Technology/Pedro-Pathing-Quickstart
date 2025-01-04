@@ -22,8 +22,19 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
 @Config
-@Autonomous(name = "[AUTO] 5+0", group = "HTECH")
-public class FiveSpecimensAuto extends LinearOpMode {
+@Autonomous(name = "[AUTO] AUTO FIX", group = "HTECH")
+public class PosibilSpecimeneFix extends LinearOpMode {
+
+
+    /*
+
+    este posibil ca robotu sa se opreasca ca prostu pt ca folosim PathChain in loc de Path
+    (m am uitat la ro2 pe cod si am vazut ca au doar pathuri)
+
+
+    * */
+
+
 
 
     //Mechanisms
@@ -40,13 +51,18 @@ public class FiveSpecimensAuto extends LinearOpMode {
     //Pedro
     Follower follower;
     Path goToPreload;
-    PathChain goToCollectSamples;
-    PathChain goToWall;
-    PathChain goToScore1;
-    PathChain goToScore2;
-    PathChain goToScore3;
-    PathChain goToScore4;
-    PathChain goToPark;
+    Path goToSample1;
+    Path goToSample2;
+    Path goToSample3;
+    Path goToHuman1;
+    Path goToHuman2;
+    Path goToHuman3;
+    Path goToScore1;
+    Path goToScore2;
+    Path goToScore3;
+    Path goToScore4;
+    Path goToWall;
+    Path goToPark;
 
 
     //States
@@ -54,7 +70,9 @@ public class FiveSpecimensAuto extends LinearOpMode {
         IDLE,
         SPECIMEN, PLACING_SPECIMEN,
         MOVING, WAITING, TRANSFERING,
-        COLLECTING_SAMPLES, COLLECTING_SPECIMEN,
+        SAMPLE1, SAMPLE2, SAMPLE3,
+        HUMAN1, HUMAN2, HUMAN3,
+        COLLECTING_SPECIMEN,
         SCORE, WALL,
         PARK, PARKED
     }
@@ -66,7 +84,8 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
     public enum TRAJECTORY_STATES{
         IDLE,
-        COLLECTING_SAMPLES,
+        GO_TO_SAMPLE1, GO_TO_SAMPLE2, GO_TO_SAMPLE3,
+        GO_TO_HUMAN1, GO_TO_HUMAN2, GO_TO_HUMAN3,
         GO_TO_SCORE1, GO_TO_SCORE2, GO_TO_SCORE3, GO_TO_SCORE4,
         GO_TO_WALL,
         GO_TO_PARK
@@ -86,7 +105,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
     //Booleans
     public boolean collectingSpecimen = false;
-    public boolean collectingSample = false;
 
 
     //Speeds
@@ -135,10 +153,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
         return !follower.isBusy() || ((follower.getPose().getX() <= (TARGET_X + 1) || follower.getPose().getX() >= (TARGET_X - 1)) && (follower.getPose().getY() <= (TARGET_Y + 1) || follower.getPose().getY() >= (TARGET_Y - 1))) || follower.getCurrentTValue() > 0.99;
     }
 
-    public boolean slowForSample3(){
-        return (follower.getPose().getX() <= (SAMPLE3_X + 1) || follower.getPose().getX() >= (SAMPLE3_X - 1)) && (follower.getPose().getY() <= (SAMPLE3_Y + 1) || follower.getPose().getY() >= (SAMPLE3_Y - 1));
-    }
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -168,125 +182,117 @@ public class FiveSpecimensAuto extends LinearOpMode {
                 new BezierLine(
                         new Point(START_X,START_Y, Point.CARTESIAN),
                         new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN)
-                ));
+                )
+        );
         goToPreload.setConstantHeadingInterpolation(Math.toRadians(PRELOAD_ANGLE));
 
-        goToCollectSamples = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(PRELOAD_X,PRELOAD_Y, Point.CARTESIAN),
-                                new Point(SAFE1_X, SAFE1_Y, Point.CARTESIAN),
-                                new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
-                                new Point(SAFE13_X, SAFE13_Y, Point.CARTESIAN),
-                                new Point(SAMPLE1_X,SAMPLE1_Y, Point.CARTESIAN)
-                        )
+        goToSample1 = new Path(
+                new BezierCurve(
+                        new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN),
+                        new Point(SAFE1_X, SAFE1_Y, Point.CARTESIAN),
+                        new Point(SAFE12_X, SAFE12_Y, Point.CARTESIAN),
+                        new Point(SAFE13_X, SAFE13_Y, Point.CARTESIAN),
+                        new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE))
-                .addPath(
-                        new BezierLine(
-                                new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
-                                new Point(HUMAN1_X, HUMAN1_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(HUMAN1_ANGLE))
-                .addPath(
-                        new BezierCurve(
-                                new Point(HUMAN1_X,HUMAN1_Y, Point.CARTESIAN),
-                                new Point(SAFE2_X, SAFE2_Y, Point.CARTESIAN),
-                                new Point(SAMPLE2_X,SAMPLE2_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE))
-                .addPath(
-                        new BezierLine(
-                                new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
-                                new Point(HUMAN2_X, HUMAN2_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(HUMAN2_ANGLE))
-                .addPath(
-                        new BezierCurve(
-                                new Point(HUMAN2_X,HUMAN2_Y, Point.CARTESIAN),
-                                new Point(SAFE3_X, SAFE3_Y, Point.CARTESIAN),
-                                new Point(SAMPLE3_X,SAMPLE3_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE))
-                .addPath(
-                        new BezierLine(
-                                new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
-                                new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(SPECIMEN1_ANGLE))
-                .build();
+        );
+        goToSample1.setConstantHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE));
 
-        goToScore1 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
-                                new Point(SCORE1_X, SCORE1_Y, Point.CARTESIAN)
-                        )
+        goToHuman1 = new Path(
+                new BezierLine(
+                        new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
+                        new Point(HUMAN1_X, HUMAN1_Y, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+        );
+        goToHuman1.setConstantHeadingInterpolation(Math.toRadians(HUMAN1_ANGLE));
 
-        goToScore2 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
-                                new Point(SCORE2_X, SCORE2_Y, Point.CARTESIAN)
-                        )
+        goToSample2 = new Path(
+                new BezierCurve(
+                        new Point(HUMAN1_X, HUMAN1_Y, Point.CARTESIAN),
+                        new Point(SAFE2_X, SAFE2_Y, Point.CARTESIAN),
+                        new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+        );
+        goToSample2.setConstantHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE));
 
-        goToScore3 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
-                                new Point(SCORE3_X, SCORE3_Y, Point.CARTESIAN)
-                        )
+        goToHuman2 = new Path(
+                new BezierLine(
+                        new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
+                        new Point(HUMAN2_X, HUMAN2_Y, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+        );
+        goToHuman2.setConstantHeadingInterpolation(Math.toRadians(HUMAN2_ANGLE));
 
-        goToScore4 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
-                                new Point(SCORE4_X, SCORE4_Y, Point.CARTESIAN)
-                        )
+        goToSample3 = new Path(
+                new BezierCurve(
+                        new Point(HUMAN2_X, HUMAN2_Y, Point.CARTESIAN),
+                        new Point(SAFE3_X, SAFE3_Y, Point.CARTESIAN),
+                        new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+        );
+        goToSample3.setConstantHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE));
 
-        goToWall = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN),
-                                new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
-                                new Point(SAFE_SPECIMEN2_X, SAFE_SPECIMEN2_Y, Point.CARTESIAN),
-                                new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN)
-                        )
+        goToHuman3 = new Path(
+                new BezierLine(
+                        new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
+                        new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(SPECIMEN_ANGLE))
-                .build();
+        );
+        goToHuman3.setConstantHeadingInterpolation(Math.toRadians(SPECIMEN1_ANGLE));
 
-        goToPark = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN),
-                                new Point(PARK_X, PARK_Y, Point.CARTESIAN)
-                        )
+        goToScore1 = new Path(
+                new BezierCurve(
+                        new Point(SPECIMEN1_X, SPECIMEN1_Y, Point.CARTESIAN),
+                        new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
+                        new Point(SCORE1_X, SCORE1_Y, Point.CARTESIAN)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(SPECIMEN_ANGLE), Math.toRadians(PARK_ANGLE))
-                .build();
+        );
+        goToScore1.setConstantHeadingInterpolation(Math.toRadians(0));
 
+        goToScore2 = new Path(
+                new BezierCurve(
+                        new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                        new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
+                        new Point(SCORE2_X, SCORE2_Y, Point.CARTESIAN)
+                )
+        );
+        goToScore2.setConstantHeadingInterpolation(Math.toRadians(0));
+
+        goToScore3 = new Path(
+                new BezierCurve(
+                        new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                        new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
+                        new Point(SCORE3_X, SCORE3_Y, Point.CARTESIAN)
+                )
+        );
+        goToScore3.setConstantHeadingInterpolation(Math.toRadians(0));
+
+        goToScore4 = new Path(
+                new BezierCurve(
+                        new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN),
+                        new Point(SAFE_SCORE_X, SAFE_SCORE_Y, Point.CARTESIAN),
+                        new Point(SCORE4_X, SCORE4_Y, Point.CARTESIAN)
+                )
+        );
+        goToScore4.setConstantHeadingInterpolation(Math.toRadians(0));
+
+        goToWall = new Path(
+                new BezierCurve(
+                        new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN),
+                        new Point(SAFE_SPECIMEN_X, SAFE_SPECIMEN_Y, Point.CARTESIAN),
+                        new Point(SAFE_SPECIMEN2_X, SAFE_SPECIMEN2_Y, Point.CARTESIAN),
+                        new Point(SPECIMEN_X, SPECIMEN_Y, Point.CARTESIAN)
+                )
+        );
+        goToWall.setConstantHeadingInterpolation(Math.toRadians(SPECIMEN_ANGLE));
+
+        goToPark = new Path(
+                new BezierLine(
+                        new Point(PRELOAD_X, PRELOAD_Y, Point.CARTESIAN),
+                        new Point(PARK_X, PARK_Y, Point.CARTESIAN)
+                )
+        );
+        goToPark.setLinearHeadingInterpolation(Math.toRadians(SPECIMEN_ANGLE), Math.toRadians(PARK_ANGLE));
+        
 
         //Starting trajectory
         follower.setMaxPower(maxSpeed);
@@ -306,7 +312,32 @@ public class FiveSpecimensAuto extends LinearOpMode {
                 case IDLE:
                     break;
 
-                case COLLECTING_SAMPLES:
+                case GO_TO_SAMPLE1:
+                    TARGET_X = SAMPLE1_X;
+                    TARGET_Y = SAMPLE1_Y;
+                    break;
+
+                case GO_TO_HUMAN1:
+                    TARGET_X = HUMAN1_X;
+                    TARGET_Y = HUMAN1_Y;
+                    break;
+
+                case GO_TO_SAMPLE2:
+                    TARGET_X = SAMPLE2_X;
+                    TARGET_Y = SAMPLE2_Y;
+                    break;
+
+                case GO_TO_HUMAN2:
+                    TARGET_X = HUMAN2_X;
+                    TARGET_Y = HUMAN2_Y;
+                    break;
+
+                case GO_TO_SAMPLE3:
+                    TARGET_X = SAMPLE3_X;
+                    TARGET_Y = SAMPLE3_Y;
+                    break;
+
+                case GO_TO_HUMAN3:
                     TARGET_X = SPECIMEN1_X;
                     TARGET_Y = SPECIMEN1_Y;
                     break;
@@ -366,12 +397,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
                 case MOVING:
                     timer.reset();
-                    if(collectingSample){
-                        if(slowForSample3()){
-                            follower.setMaxPower(sample3Speed);
-                            collectingSample = false;
-                        }
-                    }
                     if(collectingSpecimen){
                         if(follower.getCurrentTValue() >= 0.6){
                             follower.setMaxPower(collectSpeed);
@@ -388,7 +413,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     if(timer.milliseconds() > timeToScoreSpecimen){
                         outtakeSubsystem.claw.open();
                         if(SCORING_CS == SCORING_STATES.IDLE){
-                            CS = STATES.COLLECTING_SAMPLES;
+                            CS = STATES.SAMPLE1;
                         }
                         if(SCORING_CS == SCORING_STATES.SPECIMEN1){
                             CS = STATES.WALL;
@@ -405,16 +430,53 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     }
                     break;
 
-                case COLLECTING_SAMPLES:
-                    collectingSample = true;
+                case SAMPLE1:
                     lift.goToGround();
-                    extendo.goToGround();
                     intakeSubsystem.goToWall();
                     intakeSubsystem.claw.open();
                     follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToCollectSamples, true);
-                    TRAJECTORY_CS = TRAJECTORY_STATES.COLLECTING_SAMPLES;
-                    lift.goToGround();
+                    follower.followPath(goToSample1);
+                    TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_SAMPLE1;
+                    CS = STATES.MOVING;
+                    NS = STATES.HUMAN1;
+                    break;
+
+                case HUMAN1:
+                    follower.setMaxPower(maxSpeed);
+                    follower.followPath(goToHuman1);
+                    TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_HUMAN1;
+                    CS = STATES.MOVING;
+                    NS = STATES.SAMPLE2;
+                    break;
+
+                case SAMPLE2:
+                    follower.setMaxPower(maxSpeed);
+                    follower.followPath(goToSample2);
+                    TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_SAMPLE2;
+                    CS = STATES.MOVING;
+                    NS = STATES.HUMAN2;
+                    break;
+
+                case HUMAN2:
+                    follower.setMaxPower(maxSpeed);
+                    follower.followPath(goToHuman2);
+                    TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_HUMAN2;
+                    CS = STATES.MOVING;
+                    NS = STATES.SAMPLE3;
+                    break;
+
+                case SAMPLE3:
+                    follower.setMaxPower(maxSpeed);
+                    follower.followPath(goToSample3);
+                    TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_SAMPLE3;
+                    CS = STATES.MOVING;
+                    NS = STATES.HUMAN3;
+                    break;
+
+                case HUMAN3:
+                    follower.setMaxPower(sample3Speed);
+                    follower.followPath(goToHuman3);
+                    TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_HUMAN3;
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING_SPECIMEN;
                     SCORING_CS = SCORING_STATES.SPECIMEN1;
