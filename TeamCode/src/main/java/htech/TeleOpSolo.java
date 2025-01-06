@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import htech.classes.StickyGamepad;
-import htech.subsystem.ChassisFollower;
 import htech.subsystem.ChassisMovement;
 import htech.subsystem.ExtendoSystem;
 import htech.subsystem.IntakeSubsystem;
@@ -28,7 +27,7 @@ public class TeleOpSolo extends LinearOpMode {
     ElapsedTime timer;
     ElapsedTime matchTimer;
     RobotSystems robotSystems;
-    ChassisFollower chassisFollower;
+//    ChassisFollower chassisFollower;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,7 +41,7 @@ public class TeleOpSolo extends LinearOpMode {
         matchTimer = new ElapsedTime();
         robotSystems = new RobotSystems(extendo, lift, intakeSubsystem, outtakeSubsystem);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        chassisFollower = new ChassisFollower(hardwareMap);
+//        chassisFollower = new ChassisFollower(hardwareMap);
 
         // CLASSES //
         StickyGamepad stickyGamepad2 = new StickyGamepad(gamepad2, this);
@@ -59,8 +58,8 @@ public class TeleOpSolo extends LinearOpMode {
         //lift.reset();
         while (opModeIsActive()) {
 
-//            chassisMovement.move(gamepad1);
-            chassisFollower.move(gamepad1);
+            chassisMovement.move(gamepad1);
+//            chassisFollower.move(gamepad1);
 
             extendo.moveFree(gamepad1.right_trigger - gamepad1.left_trigger);
 

@@ -70,6 +70,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
     public enum TRAJECTORY_STATES{
         IDLE,
+        PRELOAD,
         COLLECTING_SAMPLES,
         GO_TO_SCORE1, GO_TO_SCORE2, GO_TO_SCORE3, GO_TO_SCORE4,
         GO_TO_WALL,
@@ -136,11 +137,11 @@ public class FiveSpecimensAuto extends LinearOpMode {
 
     //Methods
     public boolean finishedPath(){
-        return !follower.isBusy() || ((follower.getPose().getX() <= (TARGET_X + 1) || follower.getPose().getX() >= (TARGET_X - 1)) && (follower.getPose().getY() <= (TARGET_Y + 1) || follower.getPose().getY() >= (TARGET_Y - 1))) || follower.getCurrentTValue() > 0.99;
+        return !follower.isBusy() || ((follower.getPose().getX() < (TARGET_X + 1) && follower.getPose().getX() > (TARGET_X - 1)) && (follower.getPose().getY() < (TARGET_Y + 1) && follower.getPose().getY() > (TARGET_Y - 1))) || follower.getCurrentTValue() > 0.99;
     }
 
     public boolean slowForSample3(){
-        return (follower.getPose().getX() <= (SAMPLE3_X + 1) || follower.getPose().getX() >= (SAMPLE3_X - 1)) && (follower.getPose().getY() <= (SAMPLE3_Y + 1) || follower.getPose().getY() >= (SAMPLE3_Y - 1));
+        return (follower.getPose().getX() < (SAMPLE3_X + 1) && follower.getPose().getX() > (SAMPLE3_X - 1)) && (follower.getPose().getY() < (SAMPLE3_Y + 1) && follower.getPose().getY() > (SAMPLE3_Y - 1));
     }
 
     @Override
@@ -187,6 +188,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(SAMPLE1_ANGLE))
+                .setPathEndTimeoutConstraint(0)
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE1_X, SAMPLE1_Y, Point.CARTESIAN),
@@ -194,6 +196,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(HUMAN1_ANGLE))
+                .setPathEndTimeoutConstraint(0)
                 .addPath(
                         new BezierCurve(
                                 new Point(HUMAN1_X,HUMAN1_Y, Point.CARTESIAN),
@@ -202,6 +205,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(SAMPLE2_ANGLE))
+                .setPathEndTimeoutConstraint(0)
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE2_X, SAMPLE2_Y, Point.CARTESIAN),
@@ -209,6 +213,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(HUMAN2_ANGLE))
+                .setPathEndTimeoutConstraint(0)
                 .addPath(
                         new BezierCurve(
                                 new Point(HUMAN2_X,HUMAN2_Y, Point.CARTESIAN),
@@ -217,6 +222,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(SAMPLE3_ANGLE))
+                .setPathEndTimeoutConstraint(0)
                 .addPath(
                         new BezierLine(
                                 new Point(SAMPLE3_X, SAMPLE3_Y, Point.CARTESIAN),
@@ -297,6 +303,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
         follower.setMaxPower(maxSpeed);
         follower.followPath(goToPreload);
         CS = STATES.SPECIMEN;
+        TRAJECTORY_CS = TRAJECTORY_STATES.PRELOAD;
 
         waitForStart();
 
@@ -304,50 +311,6 @@ public class FiveSpecimensAuto extends LinearOpMode {
         matchTimer.reset();
 
         while(opModeIsActive() && matchTimer.seconds() < 30.5){
-
-            //State machine for trajectory
-            switch(TRAJECTORY_CS){
-
-                case IDLE:
-                    break;
-
-                case COLLECTING_SAMPLES:
-                    TARGET_X = SPECIMEN1_X;
-                    TARGET_Y = SPECIMEN1_Y;
-                    break;
-
-                case GO_TO_SCORE1:
-                    TARGET_X = SCORE1_X;
-                    TARGET_Y = SCORE1_Y;
-                    break;
-
-                case GO_TO_SCORE2:
-                    TARGET_X = SCORE2_X;
-                    TARGET_Y = SCORE2_Y;
-                    break;
-
-                case GO_TO_SCORE3:
-                    TARGET_X = SCORE3_X;
-                    TARGET_Y = SCORE3_Y;
-                    break;
-
-                case GO_TO_SCORE4:
-                    TARGET_X = SCORE4_X;
-                    TARGET_Y = SCORE4_Y;
-                    break;
-
-                case GO_TO_WALL:
-                    TARGET_X = SPECIMEN_X;
-                    TARGET_Y = SPECIMEN_Y;
-                    break;
-
-                case GO_TO_PARK:
-                    TARGET_X = PARK_X;
-                    TARGET_Y = PARK_Y;
-                    break;
-
-            }
-
 
             //State machine for autonomous
             switch(CS){
@@ -370,20 +333,67 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     break;
 
                 case MOVING:
+                    //State machine for trajectory
+//                    switch(TRAJECTORY_CS){
+//
+//                        case IDLE:
+//                            break;
+//
+//                        case PRELOAD:
+//                            TARGET_X = PRELOAD_X;
+//                            TARGET_Y = PRELOAD_Y;
+//                            break;
+//
+//                        case COLLECTING_SAMPLES:
+//                            TARGET_X = SPECIMEN1_X;
+//                            TARGET_Y = SPECIMEN1_Y;
+//                            break;
+//
+//                        case GO_TO_SCORE1:
+//                            TARGET_X = SCORE1_X;
+//                            TARGET_Y = SCORE1_Y;
+//                            break;
+//
+//                        case GO_TO_SCORE2:
+//                            TARGET_X = SCORE2_X;
+//                            TARGET_Y = SCORE2_Y;
+//                            break;
+//
+//                        case GO_TO_SCORE3:
+//                            TARGET_X = SCORE3_X;
+//                            TARGET_Y = SCORE3_Y;
+//                            break;
+//
+//                        case GO_TO_SCORE4:
+//                            TARGET_X = SCORE4_X;
+//                            TARGET_Y = SCORE4_Y;
+//                            break;
+//
+//                        case GO_TO_WALL:
+//                            TARGET_X = SPECIMEN_X;
+//                            TARGET_Y = SPECIMEN_Y;
+//                            break;
+//
+//                        case GO_TO_PARK:
+//                            TARGET_X = PARK_X;
+//                            TARGET_Y = PARK_Y;
+//                            break;
+//
+//                    }
                     timer.reset();
-                    if(collectingSample){
-                        if(slowForSample3()){
-                            follower.setMaxPower(sample3Speed);
-                            collectingSample = false;
-                        }
-                    }
-                    if(collectingSpecimen){
-                        if(follower.getCurrentTValue() >= 0.6){
-                            follower.setMaxPower(collectSpeed);
-                            collectingSpecimen = false;
-                        }
-                    }
-                    if(finishedPath()){
+//                    if(collectingSample){
+//                        if(slowForSample3()){
+//                            follower.setMaxPower(sample3Speed);
+//                            collectingSample = false;
+//                        }
+//                    }
+//                    if(collectingSpecimen){
+//                        if(follower.getCurrentTValue() >= 0.6){
+//                            follower.setMaxPower(collectSpeed);
+//                            collectingSpecimen = false;
+//                        }
+//                    }
+                    if(!follower.isBusy()){
                         CS = NS;
                     }
                     break;
@@ -417,7 +427,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     intakeSubsystem.goToWall();
                     intakeSubsystem.claw.open();
                     follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToCollectSamples, true);
+                    follower.followPath(goToCollectSamples);
                     TRAJECTORY_CS = TRAJECTORY_STATES.COLLECTING_SAMPLES;
                     lift.goToGround();
                     CS = STATES.MOVING;
@@ -473,7 +483,7 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     lift.goToGround();
                     intakeSubsystem.goToWall();
                     follower.setMaxPower(maxSpeed);
-                    follower.followPath(goToWall, true);
+                    follower.followPath(goToWall);
                     TRAJECTORY_CS = TRAJECTORY_STATES.GO_TO_WALL;
                     CS = STATES.MOVING;
                     NS = STATES.COLLECTING_SPECIMEN;
@@ -503,6 +513,8 @@ public class FiveSpecimensAuto extends LinearOpMode {
                     break;
 
             }
+
+
 
 
             //Telemetry

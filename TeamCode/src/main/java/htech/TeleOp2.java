@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import htech.classes.StickyGamepad;
-import htech.subsystem.ChassisFollower;
 import htech.subsystem.ChassisMovement;
 import htech.subsystem.ExtendoSystem;
 import htech.subsystem.IntakeSubsystem;

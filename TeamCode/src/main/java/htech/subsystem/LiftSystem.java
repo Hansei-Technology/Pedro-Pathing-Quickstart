@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import htech.classes.PIDController;
 import htech.config.Motors;
 import htech.config.PositionsLift;
-import pedroPathing.localization.Encoder;
 
 //2 motor lift system with PID
 public class LiftSystem {
@@ -34,8 +33,8 @@ public class LiftSystem {
         left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
         right.setDirection(DcMotorEx.Direction.REVERSE);
         left.setDirection(DcMotorEx.Direction.FORWARD);
